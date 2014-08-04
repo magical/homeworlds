@@ -1,5 +1,9 @@
 package main
 
+import (
+	"errors"
+)
+
 type (
 	Size   uint
 	Color  uint
@@ -60,18 +64,19 @@ type Game struct {
 	// Players records the number of players.
 	Players int
 
-	// The player whose turn it is
+	// CurrentPlayer records whose turn it is.
 	CurrentPlayer Player
 
-	// Bank records which pieces are in the bank.
+	// Bank records how many of each piece are in the bank.
 	Bank map[Piece]int
 
 	// Homeworlds maps each player to their homeworld.
 	// These systems are also present in the Stars slice.
 	Homeworlds map[Player]*Star
 
-	// Stars is a list of star systems that are currently occupied.
-	Stars []*Star
+	// Stars is a map of star systems that are currently occupied.
+	// It is keyed by the name of the system.
+	Stars map[string]*Star
 }
 
 // Star represents an occupied star system.
@@ -87,13 +92,7 @@ type Star struct {
 	Pieces []Piece
 
 	// The ships occupying the star.
-	Ships []Ship
-}
-
-// Ship represents a piece controlled by a player.
-type Ship struct {
-	Piece  Piece
-	Player Player
+	Ships map[Player][]Piece
 }
 
 // Actions:
@@ -106,3 +105,107 @@ type Ship struct {
 //    Sacrifice ship inSystem
 //    Catastrophe color inSystem
 //    Pass
+
+// Build places the given piece in the star system.
+// Returns an error if the piece is unavailable,
+// or if a smaller piece of the same color is available,
+// or if the player does not control a ship of the same color.
+//
+// TODO: Make sure we have access to the grow power.
+// Unless this is a sacrifice action...
+func (g *Game) Build(p Piece, s *Star) error {
+	if !s.ownsColor(g.CurrentPlayer, p.Color()) {
+		return errors.New("Build: color not available")
+	}
+	if g.Bank[p] <= 0 {
+		return errors.New("Build: piece not avalable")
+	}
+	for i := 1; i < int(p.Size()); i++ {
+		if g.Bank[p-Piece(i)] > 0 {
+			return errors.New("Build: smaller piece available")
+		}
+	}
+	s.add(g.CurrentPlayer, p)
+	g.Bank[p]--
+	return nil
+}
+
+func (s *Star) ownsColor(pl Player, c Color) bool {
+	for _, p := range s.Ships[pl] {
+		if p.Color() == c {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *Star) add(pl Player, p Piece) {
+	s.Ships[pl] = append(s.Ships[pl], p)
+}
+
+// Move moves a ship from one star to another.
+// Returns an error if the current player
+// does not control the ship at the specified system,
+// or if the systems are not connected.
+func (g *Game) Move(p Piece, s, dst *Star) error {
+	if !s.connects(dst) {
+		return errors.New("Move: system not connected")
+	}
+	ok := s.remove(g.CurrentPlayer, p)
+	if !ok {
+		return errors.New("Move: no such ship")
+	}
+	dst.add(g.CurrentPlayer, p)
+	if s.empty() {
+		g.destroy(s)
+	}
+	return nil
+}
+
+func (s *Star) connects(r *Star) bool {
+	// Two systems are connected if they do not share
+	// any pieces of the same size.
+	for _, p := range s.Pieces {
+		for _, q := range r.Pieces {
+			if p.Size() == q.Size() {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (s *Star) remove(pl Player, p0 Piece) bool {
+	for i, p := range s.Ships[pl] {
+		if p == p0 {
+			s.Ships[pl] = append(s.Ships[pl][:i], s.Ships[pl][i+1:]...)
+			return true
+		}
+	}
+	return false
+}
+
+// Empty reports whether any ships occupy the star.
+func (s *Star) empty() bool {
+	for _, ships := range s.Ships {
+		if len(ships) > 0 {
+			return false
+		}
+	}
+	return true
+}
+
+// Destroy returns a star and all its ships to the bank.
+func (g *Game) destroy(s *Star) {
+	for _, ships := range s.Ships {
+		for _, p := range ships {
+			g.Bank[p]++
+		}
+	}
+	for _, p := range s.Pieces {
+		g.Bank[p]++
+	}
+	s.Ships = nil
+	s.Pieces = nil
+	delete(g.Stars, s.Name)
+}
