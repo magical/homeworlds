@@ -122,7 +122,7 @@ func (g *Game) Build(p Piece, s *Star) error {
 	}
 	// TODO: This loop is unclear.
 	for i := 1; i < int(p.Size()); i++ {
-		if g.available(p-Piece(i)) {
+		if g.available(p - Piece(i)) {
 			return errors.New("Build: smaller piece available")
 		}
 	}
@@ -356,9 +356,9 @@ func (g *Game) Discover(p Piece, s *Star, newPiece Piece, newName string) error 
 	}
 	// TODO: don't allocate yet.
 	newStar := &Star{
-		Name: newName,
+		Name:   newName,
 		Pieces: []Piece{newPiece},
-		Ships: make(map[Player][]Piece),
+		Ships:  make(map[Player][]Piece),
 	}
 	if !s.connects(newStar) {
 		return errors.New("Discover: system not connected")
