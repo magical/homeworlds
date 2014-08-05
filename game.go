@@ -117,17 +117,22 @@ func (g *Game) Build(p Piece, s *Star) error {
 	if !s.ownsColor(g.CurrentPlayer, p.Color()) {
 		return errors.New("Build: color not available")
 	}
-	if g.Bank[p] <= 0 {
+	if !g.available(p) {
 		return errors.New("Build: piece not avalable")
 	}
+	// TODO: This loop is unclear.
 	for i := 1; i < int(p.Size()); i++ {
-		if g.Bank[p-Piece(i)] > 0 {
+		if g.available(p-Piece(i)) {
 			return errors.New("Build: smaller piece available")
 		}
 	}
+	g.take(p)
 	s.add(g.CurrentPlayer, p)
-	g.Bank[p]--
 	return nil
+}
+
+func (g *Game) available(p Piece) bool {
+	return g.Bank[p] > 0
 }
 
 func (s *Star) ownsColor(pl Player, c Color) bool {
@@ -141,6 +146,10 @@ func (s *Star) ownsColor(pl Player, c Color) bool {
 
 func (s *Star) add(pl Player, p Piece) {
 	s.Ships[pl] = append(s.Ships[pl], p)
+}
+
+func (g *Game) take(p Piece) {
+	g.Bank[p]--
 }
 
 // Move moves a ship from one star to another.
@@ -199,13 +208,132 @@ func (s *Star) empty() bool {
 func (g *Game) destroy(s *Star) {
 	for _, ships := range s.Ships {
 		for _, p := range ships {
-			g.Bank[p]++
+			g.put(p)
 		}
 	}
 	for _, p := range s.Pieces {
-		g.Bank[p]++
+		g.put(p)
 	}
 	s.Ships = nil
 	s.Pieces = nil
 	delete(g.Stars, s.Name)
+}
+
+func (g *Game) put(p Piece) {
+	g.Bank[p]++
+}
+
+// Attack takes control of a piece owned by the target player.
+// Returns an error if the target does not own the target piece,
+// or if the target piece is larger than the attacking player's largest ship.
+func (g *Game) Attack(p Piece, s *Star, target Player) error {
+	if !s.owns(target, p) {
+		return errors.New("Attack: no such piece")
+	}
+	if p.Size() > s.largest(g.CurrentPlayer) {
+		return errors.New("Attack: target piece too large")
+	}
+	s.remove(target, p)
+	s.add(g.CurrentPlayer, p)
+	return nil
+}
+
+func (s *Star) owns(pl Player, p0 Piece) bool {
+	for _, p := range s.Ships[pl] {
+		if p0 == p {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *Star) largest(pl Player) Size {
+	size := Size(0)
+	for _, p := range s.Ships[pl] {
+		if p.Size() > size {
+			size = p.Size()
+		}
+	}
+	return size
+}
+
+// Trade swaps a piece p for a piece q of the same size from the bank.
+// Returns an error if the pieces are not the same size,
+// or if the desired piece is not available,
+// or if the player does not own the traded piece.
+func (g *Game) Trade(p Piece, s *Star, q Piece) error {
+	if p.Size() != q.Size() {
+		return errors.New("Trade: size mismatch")
+	}
+	if !g.available(q) {
+		return errors.New("Trade: piece not available")
+	}
+	if !s.owns(g.CurrentPlayer, p) {
+		return errors.New("Trade: no such piece")
+	}
+	s.remove(g.CurrentPlayer, p)
+	g.put(p)
+	g.take(q)
+	s.add(g.CurrentPlayer, q)
+	return nil
+}
+
+// Sacrifice returns a piece to the bank.
+// Typically this allows the player to take further actions,
+// but this is not enforced.
+// Returns an error if the player does not own the piece.
+func (g *Game) Sacrifice(p Piece, s *Star) error {
+	ok := s.remove(g.CurrentPlayer, p)
+	if !ok {
+		return errors.New("Sacrifice: no such piece")
+	}
+	g.put(p)
+	return nil
+}
+
+// Catastrophe returns all pieces of the given color in the system to the bank,
+// including all players' ships and the star itself.
+// This may result in the complete destruction of the system.
+// Returns an error if the color is not overpopulated.
+func (g *Game) Catastrophe(c Color, s *Star) error {
+	if s.population(c) < 4 {
+		return errors.New("Catastrophe: not overpopulated")
+	}
+	for pl, ships := range s.Ships {
+		s.Ships[pl] = g.filter(ships, c)
+	}
+	s.Pieces = g.filter(s.Pieces, c)
+	if len(s.Pieces) == 0 || s.empty() {
+		g.destroy(s)
+	}
+	return nil
+}
+
+func (s *Star) population(c Color) int {
+	n := 0
+	for _, ships := range s.Ships {
+		for _, p := range ships {
+			if p.Color() == c {
+				n++
+			}
+		}
+	}
+	for _, p := range s.Pieces {
+		if p.Color() == c {
+			n++
+		}
+	}
+	return n
+}
+
+func (g *Game) filter(pieces []Piece, c Color) []Piece {
+	var q []Piece
+	for _, p := range pieces {
+		if p.Color() != c {
+			q = append(q, p)
+		} else {
+			g.put(p)
+		}
+	}
+	return q
 }
