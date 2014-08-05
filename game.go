@@ -337,3 +337,35 @@ func (g *Game) filter(pieces []Piece, c Color) []Piece {
 	}
 	return q
 }
+
+// Discover constructs a new star named newName out of newPiece
+// and moves the piece p to it.
+// Returns an error if the requested piece is not available,
+// or if the new system would not be connected to the old system,
+// or if the active piece is not controlled by the player,
+// or if the name is already taken.
+func (g *Game) Discover(p Piece, s *Star, newPiece Piece, newName string) error {
+	if !s.owns(g.CurrentPlayer, p) {
+		return errors.New("Discover: no such piece")
+	}
+	if !g.available(newPiece) {
+		return errors.New("Discover: piece not available")
+	}
+	if _, exists := g.Stars[newName]; exists {
+		return errors.New("Discover: name already taken")
+	}
+	// TODO: don't allocate yet.
+	newStar := &Star{
+		Name: newName,
+		Pieces: []Piece{newPiece},
+		Ships: make(map[Player][]Piece),
+	}
+	if !s.connects(newStar) {
+		return errors.New("Discover: system not connected")
+	}
+	g.take(newPiece)
+	g.Stars[newName] = newStar
+	s.remove(g.CurrentPlayer, p)
+	newStar.add(g.CurrentPlayer, p)
+	return nil
+}
