@@ -1,4 +1,4 @@
-package main
+package homeworlds
 
 import (
 	"errors"
@@ -54,6 +54,13 @@ func (p Piece) Size() Size {
 	return Size(p)%3 + 1
 }
 
+// Players
+// TODO: east, west.
+const (
+	North Player = iota
+	South
+)
+
 // Game represents the current state of a game.
 type Game struct {
 	// Phase records whether the game is
@@ -61,8 +68,8 @@ type Game struct {
 	// in the middle, or has ended.
 	Phase int
 
-	// Players records the number of players.
-	Players int
+	// NumPlayers records the number of players.
+	NumPlayers int
 
 	// CurrentPlayer records whose turn it is.
 	CurrentPlayer Player
