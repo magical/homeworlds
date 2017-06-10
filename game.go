@@ -376,3 +376,38 @@ func (g *Game) Discover(p Piece, s *Star, newPiece Piece, newName string) error 
 	newStar.add(g.CurrentPlayer, p)
 	return nil
 }
+
+func (g *Game) ResetBank() {
+	g.Bank = make(map[Piece]int)
+	for p := 0; p < 12; p++ {
+		g.Bank[Piece(p)] = 3
+	}
+	for _, s := range g.Stars {
+		for _, p := range s.Pieces {
+			g.Bank[p]--
+		}
+		for _, ships := range s.Ships {
+			for _, p := range ships {
+				g.Bank[p]--
+			}
+		}
+	}
+}
+
+func (g *Game) IsOver() bool {
+	for pl := Player(0); int(pl) < g.NumPlayers; pl++ {
+		if len(g.Homeworlds[pl].Ships[pl]) < 1 {
+			return true
+		}
+	}
+	return false
+}
+
+func (g *Game) Winner() Player {
+	for pl := Player(0); int(pl) < g.NumPlayers; pl++ {
+		if len(g.Homeworlds[pl].Ships[pl]) > 0 {
+			return pl
+		}
+	}
+	return Player(100)
+}
