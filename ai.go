@@ -1,9 +1,6 @@
 package homeworlds
 
-import (
-	"fmt"
-	"sort"
-)
+import "fmt"
 
 type AI struct {
 }
@@ -25,6 +22,7 @@ const (
 	Trade
 	Attack
 	Catastrope
+	Sacrifice
 )
 
 func (a Action) Type() ActionType { return ActionType(a.typ) }
@@ -71,9 +69,8 @@ func (g *Game) BasicActions() []Action {
 	actions = append(actions, Action{typ: uint8(Pass)})
 
 	stars := g.sortedStars()
-	for _, name := range stars {
+	for systemId, name := range stars {
 		s := g.Stars[name]
-		systemId := sort.SearchStrings(stars, name)
 
 		var powers uint
 		for _, p := range s.Pieces {
@@ -123,17 +120,17 @@ func (g *Game) BasicActions() []Action {
 		}
 
 		if powers&(1<<Yellow) != 0 {
-			for _, name := range stars {
+			for id, name := range stars {
 				r := g.Stars[name]
 				if s.connects(r) {
 					for _, p := range s.Ships[g.CurrentPlayer] {
-						id := sort.SearchStrings(stars, name)
 						actions = append(actions, mkmove(p, systemId, id))
 					}
 				}
 			}
 
-			for q, _ := range g.Bank {
+			for i := 0; i < 12; i++ {
+				q := Piece(i)
 				if g.available(q) && s.wouldConnect(q) {
 					for _, p := range s.Ships[g.CurrentPlayer] {
 						actions = append(actions, mkaction(Discover, p, systemId, Piece(q)))
@@ -164,4 +161,148 @@ func (s *Star) wouldConnect(p Piece) bool {
 		}
 	}
 	return true
+}
+
+type SacrificeAction struct {
+	Ship    Piece
+	System  uint8
+	Actions []Action
+}
+
+func (g *Game) SacrificeActions() []SacrificeAction {
+	var actions []SacrificeAction
+	stars := g.sortedStars()
+	for systemId, name := range stars {
+		s := g.Stars[name]
+		for _, p := range s.Ships[g.CurrentPlayer] {
+			n := int(p.Size())
+			a := SacrificeAction{Ship: p, System: uint8(systemId)}
+			tmp := g.Copy()
+			s = tmp.Stars[name]
+			tmp.Sacrifice(p, s)
+			actions = sacrifice(tmp, actions, a, n)
+		}
+	}
+	return actions
+}
+
+func sacrifice(g *Game, actions []SacrificeAction, sa SacrificeAction, n int) []SacrificeAction {
+	stars := g.sortedStars()
+	switch sa.Ship.Color() {
+	case Red:
+		for systemId, name := range stars {
+			s := g.Stars[name]
+			if len(s.Ships[g.CurrentPlayer]) > 0 {
+				size := s.largest(g.CurrentPlayer)
+				for pl, ships := range s.Ships {
+					if pl != g.CurrentPlayer {
+						for _, q := range ships {
+							if q.Size() <= size {
+								a := mkaction(Attack, q, systemId, 0)
+								actions = appendSacrifice(actions, g, stars, sa, a, n)
+							}
+						}
+					}
+				}
+			}
+		}
+
+	case Yellow:
+		for systemId, name := range stars {
+			s := g.Stars[name]
+			if len(s.Ships[g.CurrentPlayer]) > 0 {
+				for id, name := range stars {
+					r := g.Stars[name]
+					if s.connects(r) {
+						for _, p := range s.Ships[g.CurrentPlayer] {
+							a := mkmove(p, systemId, id)
+							actions = appendSacrifice(actions, g, stars, sa, a, n)
+						}
+					}
+				}
+
+				for i := 0; i < 12; i++ {
+					q := Piece(i)
+					if g.available(q) && s.wouldConnect(q) {
+						for _, p := range s.Ships[g.CurrentPlayer] {
+							a := mkaction(Discover, p, systemId, Piece(q))
+							actions = appendSacrifice(actions, g, stars, sa, a, n)
+						}
+					}
+				}
+			}
+		}
+
+	case Green:
+		for systemId, name := range stars {
+			s := g.Stars[name]
+			if len(s.Ships[g.CurrentPlayer]) > 0 {
+				var colors uint
+				for _, p := range s.Ships[g.CurrentPlayer] {
+					colors |= 1 << p.Color()
+				}
+				for c := Color(0); c < Color(4); c++ {
+					if colors&(1<<c) != 0 {
+						q, ok := g.smallest(c)
+						if ok {
+							a := mkaction(Build, q, systemId, 0)
+							actions = appendSacrifice(actions, g, stars, sa, a, n)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return actions
+}
+
+func appendSacrifice(actions []SacrificeAction, g *Game, stars []string, sa SacrificeAction, a Action, n int) []SacrificeAction {
+	sa = sa.append(a)
+	actions = append(actions, sa)
+	if n > 1 {
+		tmp := g.Copy()
+		do(tmp, stars, a)
+		actions = sacrifice(tmp, actions, sa, n-1)
+	}
+	return actions
+}
+
+func (sa SacrificeAction) append(a Action) SacrificeAction {
+	actions := sa.Actions
+	sa.Actions = make([]Action, len(actions)+1)
+	copy(sa.Actions, actions)
+	sa.Actions[len(actions)] = a
+	return sa
+}
+
+var newSystemId = 0
+
+func do(g *Game, stars []string, a Action) error {
+	star, ok := g.Stars[stars[a.System()]]
+	if !ok {
+		return fmt.Errorf("no such system %s", a.System())
+	}
+	switch a.Type() {
+	case Build:
+		return g.Build(a.Ship(), star)
+	case Trade:
+		return g.Trade(a.Ship(), star, a.NewShip())
+	case Move:
+		toStar, ok := g.Stars[stars[a.NewSystem()]]
+		if !ok {
+			return fmt.Errorf("no such system %s", a.NewSystem())
+		}
+		return g.Move(a.Ship(), star, toStar)
+	case Attack:
+		target := North
+		if g.CurrentPlayer == North {
+			target = South
+		}
+		return g.Attack(a.Ship(), star, target)
+	case Discover:
+		newSystemId++
+		return g.Discover(a.Ship(), star, a.NewShip(), fmt.Sprint(newSystemId))
+	}
+	return nil
 }

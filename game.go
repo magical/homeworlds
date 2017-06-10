@@ -234,6 +234,9 @@ func (g *Game) put(p Piece) {
 // Returns an error if the target does not own the target piece,
 // or if the target piece is larger than the attacking player's largest ship.
 func (g *Game) Attack(p Piece, s *Star, target Player) error {
+	if target == g.CurrentPlayer {
+		return errors.New("Attack: cannot attack yourself")
+	}
 	if !s.owns(target, p) {
 		return errors.New("Attack: no such piece")
 	}
@@ -295,6 +298,7 @@ func (g *Game) Sacrifice(p Piece, s *Star) error {
 		return errors.New("Sacrifice: no such piece")
 	}
 	g.put(p)
+	// TODO: destroy star if empty
 	return nil
 }
 
