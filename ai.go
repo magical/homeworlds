@@ -18,12 +18,13 @@ type Action struct {
 type ActionType int
 
 const (
-	Catastrope ActionType = iota
+	Pass ActionType = iota
 	Build
 	Move
 	Discover
 	Trade
 	Attack
+	Catastrope
 )
 
 func (a Action) Type() ActionType { return ActionType(a.typ) }
@@ -41,6 +42,7 @@ func (t ActionType) String() string {
 		Discover:   "Discover",
 		Attack:     "Attack",
 		Trade:      "Trade",
+		Pass:       "Pass",
 	}[t]
 }
 
@@ -66,6 +68,7 @@ func mkmove(ship Piece, system, tosystem int) Action {
 
 func (g *Game) Actions() []Action {
 	var actions []Action
+	actions = append(actions, Action{typ: uint8(Pass)})
 
 	stars := g.sortedStars()
 	for _, name := range stars {
