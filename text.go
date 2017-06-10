@@ -3,6 +3,7 @@ package homeworlds
 import (
 	"fmt"
 	"io"
+	"sort"
 	"strings"
 )
 
@@ -51,7 +52,9 @@ func Print(w io.Writer, g *Game) error {
 		fmt.Fprintf(w, "  %s's homeworld, a %s star.\n", pl, fmtStar(s.Pieces))
 	}
 	// BUG: Stars is a map, so this prints the stars in a random order.
-	for _, s := range g.Stars {
+	stars := g.sortedStars()
+	for _, name := range stars {
+		s := g.Stars[name]
 		if s.IsHomeworld {
 			continue
 		}
@@ -74,7 +77,8 @@ func Print(w io.Writer, g *Game) error {
 			}
 			fmt.Fprint(w, fmtShips(s.Ships[pl]), ".\n")
 		}
-		for _, s := range g.Stars {
+		for _, name := range stars {
+			s := g.Stars[name]
 			if s.IsHomeworld {
 				continue
 			}
@@ -283,4 +287,13 @@ func joinComma(s []string) string {
 	default:
 		return strings.Join(s[:len(s)-1], ", ") + ", and " + s[len(s)-1]
 	}
+}
+
+func (g *Game) sortedStars() []string {
+	names := make([]string, 0, len(g.Stars))
+	for name, _ := range g.Stars {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	return names
 }
