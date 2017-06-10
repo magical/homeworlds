@@ -297,3 +297,5 @@ func (g *Game) sortedStars() []string {
 	sort.Strings(names)
 	return names
 }
+
+func (g *Game) SortedStars() []string { return g.sortedStars() }

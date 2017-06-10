@@ -397,6 +397,10 @@ func (g *Game) ResetBank() {
 	}
 }
 
+func (g *Game) EndTurn() {
+	g.CurrentPlayer = Player((int(g.CurrentPlayer) + 1) % g.NumPlayers)
+}
+
 func (g *Game) IsOver() bool {
 	for pl := Player(0); int(pl) < g.NumPlayers; pl++ {
 		if len(g.Homeworlds[pl].Ships[pl]) < 1 {
@@ -413,4 +417,33 @@ func (g *Game) Winner() Player {
 		}
 	}
 	return Player(100)
+}
+
+func (g0 *Game) Copy() *Game {
+	g := *g0
+	g.Bank = make(map[Piece]int)
+	g.Stars = make(map[string]*Star)
+	g.Homeworlds = make(map[Player]*Star)
+	for p, n := range g0.Bank {
+		g.Bank[p] = n
+	}
+	for k, s := range g0.Stars {
+		g.Stars[k] = s.Copy()
+	}
+	for pl, s := range g0.Homeworlds {
+		g.Homeworlds[pl] = g.Stars[s.Name]
+	}
+	return &g
+}
+
+func (s0 *Star) Copy() *Star {
+	s := *s0
+	s.Pieces = make([]Piece, len(s0.Pieces))
+	copy(s.Pieces, s0.Pieces)
+	s.Ships = make(map[Player][]Piece)
+	for pl, ships := range s0.Ships {
+		s.Ships[pl] = make([]Piece, len(ships))
+		copy(s.Ships[pl], ships)
+	}
+	return &s
 }
