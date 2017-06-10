@@ -374,6 +374,9 @@ func (g *Game) Discover(p Piece, s *Star, newPiece Piece, newName string) error 
 	g.Stars[newName] = newStar
 	s.remove(g.CurrentPlayer, p)
 	newStar.add(g.CurrentPlayer, p)
+	if s.empty() {
+		g.destroy(s)
+	}
 	return nil
 }
 
