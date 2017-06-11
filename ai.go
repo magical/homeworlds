@@ -5,6 +5,74 @@ import "fmt"
 type AI struct {
 }
 
+type Position struct {
+	bank   Bank
+	stars  []Dwarf
+	player uint8
+	turn   uint8
+}
+
+type Dwarf struct {
+	pieces Bank
+	north  Bank
+	south  Bank
+}
+
+func PositionFromGame(g *Game) Position {
+	var pos Position
+	pos.player = uint8(g.CurrentPlayer)
+	for p, n := range g.Bank {
+		pos.bank.Set(p, n)
+	}
+	stars := g.sortedStars()
+	pos.stars = make([]Dwarf, 2, len(g.Stars))
+	pos.stars[0] = dwarfFromStar(g.Homeworlds[North])
+	pos.stars[1] = dwarfFromStar(g.Homeworlds[South])
+	for _, name := range stars {
+		s := g.Stars[name]
+		if s.IsHomeworld {
+			continue
+		}
+		pos.stars = append(pos.stars, dwarfFromStar(s))
+	}
+	return pos
+}
+
+func (pos *Position) CurrentPlayer() Player {
+	return Player(pos.player)
+}
+
+func dwarfFromStar(s *Star) Dwarf {
+	var r Dwarf
+	if s == nil {
+		return r
+	}
+	for _, p := range s.Pieces {
+		r.pieces.Put(p)
+	}
+	for _, p := range s.Ships[North] {
+		r.north.Put(p)
+	}
+	for _, p := range s.Ships[South] {
+		r.south.Put(p)
+	}
+	return r
+}
+
+func (s *Dwarf) Ships(pl Player) Bank {
+	if pl == North {
+		return s.north
+	}
+	return s.south
+}
+
+func (s *Dwarf) OtherShips(pl Player) Bank {
+	if pl == North {
+		return s.south
+	}
+	return s.north
+}
+
 type Action struct {
 	typ    uint8
 	system uint8
@@ -64,76 +132,72 @@ func mkmove(ship Piece, system, tosystem int) Action {
 	return Action{typ: uint8(Move), system: uint8(system), ship: uint8(ship), arg: uint8(tosystem)}
 }
 
-func (g *Game) BasicActions() []Action {
+func (game *Game) BasicActions() []Action {
+	g := PositionFromGame(game)
+
 	var actions []Action
 	actions = append(actions, Action{typ: uint8(Pass)})
 
-	stars := g.sortedStars()
-	for systemId, name := range stars {
-		s := g.Stars[name]
+	for id, s := range g.stars {
+		ships := s.Ships(g.CurrentPlayer())
+		powers := s.pieces.or(ships)
 
-		var powers uint
-		for _, p := range s.Pieces {
-			powers |= 1 << p.Color()
-		}
-		for _, p := range s.Ships[g.CurrentPlayer] {
-			powers |= 1 << p.Color()
-		}
-
-		if powers&(1<<Green) != 0 {
-			var colors uint
-			for _, p := range s.Ships[g.CurrentPlayer] {
-				colors |= 1 << p.Color()
-			}
+		if powers.HasColor(Green) {
 			for c := Color(0); c < Color(4); c++ {
-				if colors&(1<<c) != 0 {
-					q, ok := g.smallest(c)
-					if ok {
-						actions = append(actions, mkaction(Build, q, systemId, 0))
-					}
+				if ships.HasColor(c) {
+					q := piece(g.bank.SmallestOfColor(c), c)
+					actions = append(actions, mkaction(Build, q, id, 0))
 				}
 			}
 		}
 
-		if powers&(1<<Blue) != 0 {
-			for _, p := range s.Ships[g.CurrentPlayer] {
-				for c := Color(0); c < Color(4); c++ {
-					q := piece(p.Size(), c)
-					if c != p.Color() && g.available(q) {
-						actions = append(actions, mkaction(Trade, p, systemId, q))
-					}
-				}
-			}
-		}
-
-		if powers&(1<<Red) != 0 {
-			size := s.largest(g.CurrentPlayer)
-			for pl, ships := range s.Ships {
-				if pl != g.CurrentPlayer {
-					for _, q := range ships {
-						if q.Size() <= size {
-							actions = append(actions, mkaction(Attack, q, systemId, 0))
+		if powers.HasColor(Blue) {
+			for it := ships.Iter(); !it.Done(); it.Next() {
+				if it.Count() > 0 {
+					p := it.Piece()
+					for c := Color(0); c < Color(4); c++ {
+						q := piece(p.Size(), c)
+						if c != p.Color() && g.bank.Has(q) {
+							actions = append(actions, mkaction(Trade, p, id, q))
 						}
 					}
 				}
 			}
 		}
 
-		if powers&(1<<Yellow) != 0 {
-			for id, name := range stars {
-				r := g.Stars[name]
-				if s.connects(r) {
-					for _, p := range s.Ships[g.CurrentPlayer] {
-						actions = append(actions, mkmove(p, systemId, id))
+		if powers.HasColor(Red) {
+			size := ships.Largest()
+			ships := s.OtherShips(g.CurrentPlayer())
+			for it := ships.Iter(); !it.Done(); it.Next() {
+				if it.Count() > 0 {
+					q := it.Piece()
+					if q.Size() <= size {
+						actions = append(actions, mkaction(Attack, q, id, 0))
+					}
+				}
+			}
+		}
+
+		if powers.HasColor(Yellow) {
+			for rid, r := range g.stars {
+				if s.Connects(&r) {
+					for it := ships.Iter(); !it.Done(); it.Next() {
+						if p := it.Piece(); it.Count() > 0 {
+							actions = append(actions, mkmove(p, id, rid))
+						}
 					}
 				}
 			}
 
-			for i := 0; i < 12; i++ {
-				q := Piece(i)
-				if g.available(q) && s.wouldConnect(q) {
-					for _, p := range s.Ships[g.CurrentPlayer] {
-						actions = append(actions, mkaction(Discover, p, systemId, Piece(q)))
+			for it := g.bank.Iter(); !it.Done(); it.Next() {
+				if it.Count() > 0 {
+					q := it.Piece()
+					if s.WouldConnect(q) {
+						for it := ships.Iter(); !it.Done(); it.Next() {
+							if p := it.Piece(); it.Count() > 0 {
+								actions = append(actions, mkaction(Discover, p, id, q))
+							}
+						}
 					}
 				}
 			}
@@ -161,6 +225,28 @@ func (s *Star) wouldConnect(p Piece) bool {
 		}
 	}
 	return true
+}
+
+func (s *Dwarf) Connects(r *Dwarf) bool {
+	return s.pieces.sizes()&r.pieces.sizes() == 0
+}
+
+func (s *Dwarf) WouldConnect(p Piece) bool {
+	return s.pieces.sizes()&(1<<(p.Size()*2)) == 0
+}
+func (b Bank) sizes() uint {
+	x := uint(b.bits)
+	x |= x >> 12
+	x |= x >> 6
+	x = (x & 0x15) | (x >> 1 & 0x15)
+	return x
+}
+
+// Or returns the bitwise OR of two banks.
+// This is ill-defined; only some methods will work on the returned bank.
+func (b Bank) or(other Bank) Bank {
+	b.bits |= other.bits
+	return b
 }
 
 type SacrificeAction struct {
