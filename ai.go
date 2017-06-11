@@ -132,9 +132,11 @@ func mkmove(ship Piece, system, tosystem int) Action {
 	return Action{typ: uint8(Move), system: uint8(system), ship: uint8(ship), arg: uint8(tosystem)}
 }
 
-func (game *Game) BasicActions() []Action {
-	g := PositionFromGame(game)
+func (g *Game) BasicActions() []Action {
+	return PositionFromGame(g).BasicActions()
+}
 
+func (g Position) BasicActions() []Action {
 	var actions []Action
 	actions = append(actions, Action{typ: uint8(Pass)})
 

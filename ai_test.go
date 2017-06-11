@@ -14,8 +14,9 @@ func TestBasicActions(t *testing.T) {
 }
 
 func BenchmarkActions(b *testing.B) {
+	pos := PositionFromGame(game)
 	for i := 0; i < b.N; i++ {
-		_ = game.BasicActions()
+		_ = pos.BasicActions()
 	}
 }
 
