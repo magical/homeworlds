@@ -47,19 +47,19 @@ func (b Bank) Largest() Size {
 	return Size(i)
 }
 
-func (b Bank) SmallestOfColor(c Color) Size {
+func (b Bank) LargestOfColor(c Color) Size {
 	x := b.bits >> (c * 6) & 63
-	i := 1
-	for ; x&3 != 0; x >>= 2 {
+	i := 0
+	for ; x != 0; x >>= 2 {
 		i++
 	}
 	return Size(i)
 }
 
-func (b Bank) LargestOfColor(c Color) Size {
+func (b Bank) SmallestOfColor(c Color) Size {
 	x := b.bits >> (c * 6) & 63
-	i := 0
-	for ; x&3 != 0; x >>= 2 {
+	i := 1
+	for ; i < 3 && x&3 == 0; x >>= 2 {
 		i++
 	}
 	return Size(i)
