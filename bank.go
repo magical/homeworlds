@@ -39,6 +39,7 @@ func (b Bank) Largest() Size {
 	x := b.bits
 	x |= x >> 12
 	x |= x >> 6
+	x &= 63
 
 	i := 0
 	for ; x != 0; x >>= 2 {

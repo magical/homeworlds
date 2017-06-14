@@ -538,6 +538,7 @@ func Minimax(pos Position, r *rand.Rand) (Action, float64) {
 			if err != nil {
 				panic(err)
 			}
+			tmp.catastrophes()
 			tmp = tmp.endturn()
 			v := mini(tmp, depth-1, max, r)
 			//fmt.Printf("%d + %f\n", depth, v)
@@ -555,6 +556,7 @@ func Minimax(pos Position, r *rand.Rand) (Action, float64) {
 			if err != nil {
 				panic(err)
 			}
+			tmp.catastrophes()
 			tmp = tmp.endturn()
 			v := maxi(tmp, depth-1, min, r)
 			//fmt.Printf("%d - %f\n", depth, v)
@@ -582,6 +584,7 @@ func maxi(pos Position, depth int, min float64, r *rand.Rand) float64 {
 		if err != nil {
 			panic(err)
 		}
+		tmp.catastrophes()
 		tmp = tmp.endturn()
 		v := mini(tmp, depth-1, max, r)
 		//fmt.Printf("%d + %f\n", depth, v)
@@ -610,6 +613,7 @@ func mini(pos Position, depth int, max float64, r *rand.Rand) float64 {
 		if err != nil {
 			panic(err)
 		}
+		tmp.catastrophes()
 		tmp = tmp.endturn()
 		v := maxi(tmp, depth-1, min, r)
 		//fmt.Printf("%d - %f\n", depth, v)
@@ -659,4 +663,51 @@ func shuffle(acts []Action, r *rand.Rand) {
 		acts[i], acts[j] = acts[j], acts[i]
 	}
 	//fmt.Println(acts)
+}
+
+func (pos *Position) catastrophes() {
+	for id := 0; id < len(pos.stars); id++ {
+		star := &pos.stars[id]
+		pieces := star.pieces
+		pieces.add(star.ships[0])
+		pieces.add(star.ships[1])
+		var mask uint32
+		for c := Color(0); c < Color(4); c++ {
+			if pieces.ColorCount(c) >= 4 {
+				mask |= uint32(63) << (c * 6)
+			}
+		}
+		if mask != 0 {
+			// XXX ugly
+			pos.bank.bits += star.pieces.bits & mask
+			pos.bank.bits += star.ships[0].bits & mask
+			pos.bank.bits += star.ships[1].bits & mask
+			star.pieces.bits &^= mask
+			star.ships[0].bits &^= mask
+			star.ships[1].bits &^= mask
+
+			if star.pieces.IsEmpty() {
+				// bin the whole star
+				pos.bank.add(star.ships[0])
+				pos.bank.add(star.ships[1])
+				star.ships[0].bits = 0
+				star.ships[1].bits = 0
+				if id >= 2 {
+					pos.stars = append(pos.stars[:id], pos.stars[id+1:]...)
+					id--
+				}
+			} else if star.ships[0].IsEmpty() && star.ships[1].IsEmpty() {
+				pos.bank.add(star.pieces)
+				if id >= 2 {
+					pos.stars = append(pos.stars[:id], pos.stars[id+1:]...)
+					id--
+				}
+			}
+		}
+	}
+}
+
+func (b Bank) ColorCount(c Color) int {
+	x := b.bits >> (c * 6) & 63
+	return int(x>>4) + int(x>>2&3) + int(x&3)
 }

@@ -28,7 +28,7 @@ func main() {
 			fmt.Println(err)
 			break
 		}
-		//catastrophe(g)
+		catastrophe(g)
 		g.EndTurn()
 		turn++
 	}

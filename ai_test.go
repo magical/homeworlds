@@ -36,21 +36,24 @@ func TestSacrificeActions(t *testing.T) {
 		fmt.Println(sa)
 		size += uintptr(len(sa.Actions)) * unsafe.Sizeof(sa.Actions[0])
 	}
-	fmt.Println("size: ", size)
+	fmt.Println("size:", size)
+	fmt.Println("len:", len(acts))
 }
 
 func BenchmarkSacrificeActionsNorth(b *testing.B) {
-	game := game.Copy()
+	pos := PositionFromGame(game)
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = game.SacrificeActions()
+		_ = pos.SacrificeActions()
 	}
 }
 
 func BenchmarkSacrificeActionsSouth(b *testing.B) {
 	game := game.Copy()
 	game.EndTurn()
+	pos := PositionFromGame(game)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = game.SacrificeActions()
+		_ = pos.SacrificeActions()
 	}
 }
