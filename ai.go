@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"strings"
 )
@@ -20,8 +21,7 @@ type Position struct {
 
 type Dwarf struct {
 	pieces Bank
-	north  Bank
-	south  Bank
+	ships  [2]Bank
 }
 
 func PositionFromGame(g *Game) Position {
@@ -32,8 +32,8 @@ func PositionFromGame(g *Game) Position {
 	}
 	stars := g.sortedStars()
 	pos.stars = make([]Dwarf, 2, len(g.Stars))
-	pos.stars[0] = dwarfFromStar(g.Homeworlds[North])
-	pos.stars[1] = dwarfFromStar(g.Homeworlds[South])
+	pos.stars[North] = dwarfFromStar(g.Homeworlds[North])
+	pos.stars[South] = dwarfFromStar(g.Homeworlds[South])
 	for _, name := range stars {
 		s := g.Stars[name]
 		if s.IsHomeworld {
@@ -57,28 +57,24 @@ func dwarfFromStar(s *Star) Dwarf {
 		r.pieces.Put(p)
 	}
 	for _, p := range s.Ships[North] {
-		r.north.Put(p)
+		r.ships[North].Put(p)
 	}
 	for _, p := range s.Ships[South] {
-		r.south.Put(p)
+		r.ships[South].Put(p)
 	}
 	return r
 }
 
 func (s *Dwarf) Ships(pl Player) Bank {
-	if pl == North {
-		return s.north
-	}
-	return s.south
+	return s.ships[pl&1]
 }
 
 func (s *Dwarf) OtherShips(pl Player) Bank {
-	if pl == North {
-		return s.south
-	}
-	return s.north
+	return s.ships[^pl&1]
 }
 
+// Action represents a basic action in homeworlds.
+// The zero action is a valid action (Pass).
 type Action struct {
 	typ    uint8
 	system uint8
@@ -241,7 +237,7 @@ func (s *Dwarf) Connects(r *Dwarf) bool {
 }
 
 func (s *Dwarf) WouldConnect(p Piece) bool {
-	return s.pieces.sizes()&(1<<(p.Size()*2)) == 0
+	return s.pieces.sizes()&(1<<((p.Size()-1)*2)) == 0
 }
 
 func (b Bank) sizes() uint {
@@ -374,6 +370,8 @@ func (sa SacrificeAction) append(a Action) SacrificeAction {
 
 func do(pos Position, a Action) (Position, error) {
 	switch a.Type() {
+	case Pass:
+		return pos, nil
 	case Build:
 		return pos.build(a.Ship(), a.System()), nil
 	case Trade:
@@ -394,11 +392,8 @@ func do(pos Position, a Action) (Position, error) {
 func (pos Position) build(p Piece, s int) Position {
 	pos = pos.copy()
 	pos.bank.Take(p)
-	if pos.CurrentPlayer() == North {
-		pos.stars[s].north.Put(p)
-	} else {
-		pos.stars[s].south.Put(p)
-	}
+	pl := pos.player & 1
+	pos.stars[s].ships[pl].Put(p)
 	return pos
 }
 
@@ -413,37 +408,25 @@ func (pos Position) trade(p, q Piece, s int) Position {
 	pos = pos.copy()
 	pos.bank.Put(p)
 	pos.bank.Take(q)
-	if pos.CurrentPlayer() == North {
-		pos.stars[s].north.Take(p)
-		pos.stars[s].north.Put(q)
-	} else {
-		pos.stars[s].south.Take(p)
-		pos.stars[s].south.Put(q)
-	}
+	pl := pos.player & 1
+	pos.stars[s].ships[pl].Take(p)
+	pos.stars[s].ships[pl].Put(q)
 	return pos
 }
 
 func (pos Position) move(p Piece, s, r int) Position {
 	pos = pos.copy()
-	if pos.CurrentPlayer() == North {
-		pos.stars[s].north.Take(p)
-		pos.stars[r].north.Put(p)
-	} else {
-		pos.stars[s].south.Take(p)
-		pos.stars[r].south.Put(p)
-	}
+	pl := pos.player & 1
+	pos.stars[s].ships[pl].Take(p)
+	pos.stars[r].ships[pl].Put(p)
 	return pos.gc(s)
 }
 
 func (pos Position) attack(p Piece, s int) Position {
 	pos = pos.copy()
-	if pos.CurrentPlayer() == North {
-		pos.stars[s].north.Put(p)
-		pos.stars[s].south.Take(p)
-	} else {
-		pos.stars[s].north.Take(p)
-		pos.stars[s].south.Put(p)
-	}
+	pl := pos.player & 1
+	pos.stars[s].ships[pl].Put(p)
+	pos.stars[s].ships[pl^1].Take(p)
 	return pos
 }
 
@@ -454,20 +437,19 @@ func (pos Position) discover(p Piece, s int, q Piece) Position {
 	copy(pos.stars, oldstars)
 	pos.stars[r].pieces.Put(q)
 	pos.bank.Take(q)
-	if pos.CurrentPlayer() == North {
-		pos.stars[s].north.Take(p)
-		pos.stars[r].north.Put(p)
-	} else {
-		pos.stars[s].south.Take(p)
-		pos.stars[r].south.Put(p)
-	}
+	pl := pos.player & 1
+	pos.stars[s].ships[pl].Take(p)
+	pos.stars[r].ships[pl].Put(p)
 	return pos.gc(s)
 }
 
 // delete star s if it is empty
 func (pos Position) gc(s int) Position {
+	if s < 2 {
+		return pos
+	}
 	star := pos.stars[s]
-	if star.north.IsEmpty() && star.south.IsEmpty() {
+	if star.ships[North].IsEmpty() && star.ships[South].IsEmpty() {
 		oldstars := pos.stars
 		pos.stars = make([]Dwarf, len(pos.stars)-1)
 		copy(pos.stars, oldstars[:s])
@@ -486,11 +468,8 @@ func (b *Bank) add(other Bank) {
 func (pos Position) sacrifice(p Piece, s int) Position {
 	pos = pos.copy()
 	pos.bank.Put(p)
-	if pos.CurrentPlayer() == North {
-		pos.stars[s].north.Take(p)
-	} else {
-		pos.stars[s].south.Take(p)
-	}
+	pl := pos.player & 1
+	pos.stars[s].ships[pl].Take(p)
 	return pos.gc(s)
 }
 
@@ -503,10 +482,10 @@ func (pos Position) sanityCheck() bool {
 		for it := s.pieces.Iter(); !it.Done(); it.Next() {
 			b[it.Piece()] -= it.Count()
 		}
-		for it := s.north.Iter(); !it.Done(); it.Next() {
+		for it := s.ships[North].Iter(); !it.Done(); it.Next() {
 			b[it.Piece()] -= it.Count()
 		}
-		for it := s.south.Iter(); !it.Done(); it.Next() {
+		for it := s.ships[South].Iter(); !it.Done(); it.Next() {
 			b[it.Piece()] -= it.Count()
 		}
 	}
@@ -541,8 +520,143 @@ func (pos Position) String() string {
 	fmt.Fprintln(&buf, "Stars:")
 	for _, s := range pos.stars {
 		fmt.Fprintln(&buf, "- Pieces:", s.pieces.String())
-		fmt.Fprintln(&buf, "  North:", s.north.String())
-		fmt.Fprintln(&buf, "  South:", s.south.String())
+		fmt.Fprintln(&buf, "  North:", s.ships[North].String())
+		fmt.Fprintln(&buf, "  South:", s.ships[South].String())
 	}
 	return buf.String()
+}
+
+func Minimax(pos Position, r *rand.Rand) (Action, float64) {
+	const depth = 5
+	acts := pos.BasicActions()
+	shuffle(acts, r)
+	if pos.CurrentPlayer() == North {
+		var maxact Action
+		max := -1.0
+		for _, a := range acts {
+			tmp, err := do(pos, a)
+			if err != nil {
+				panic(err)
+			}
+			tmp = tmp.endturn()
+			v := mini(tmp, depth-1, max, r)
+			//fmt.Printf("%d + %f\n", depth, v)
+			if v > max {
+				max = v
+				maxact = a
+			}
+		}
+		return maxact, max
+	} else {
+		var minact Action
+		min := 1.0
+		for _, a := range acts {
+			tmp, err := do(pos, a)
+			if err != nil {
+				panic(err)
+			}
+			tmp = tmp.endturn()
+			v := maxi(tmp, depth-1, min, r)
+			//fmt.Printf("%d - %f\n", depth, v)
+			if v < min {
+				min = v
+				minact = a
+			}
+		}
+		return minact, min
+	}
+}
+
+func maxi(pos Position, depth int, min float64, r *rand.Rand) float64 {
+	if pos.over() {
+		return pos.score()
+	}
+	if depth <= 0 {
+		return pos.score()
+	}
+	max := -1.0
+	acts := pos.BasicActions()
+	shuffle(acts, r)
+	for _, a := range acts {
+		tmp, err := do(pos, a)
+		if err != nil {
+			panic(err)
+		}
+		tmp = tmp.endturn()
+		v := mini(tmp, depth-1, max, r)
+		//fmt.Printf("%d + %f\n", depth, v)
+		if v > max {
+			max = v
+		}
+		if max >= min {
+			break
+		}
+	}
+	return max
+}
+
+func mini(pos Position, depth int, max float64, r *rand.Rand) float64 {
+	if pos.over() {
+		return pos.score()
+	}
+	if depth <= 0 {
+		return pos.score()
+	}
+	min := 1.0
+	acts := pos.BasicActions()
+	shuffle(acts, r)
+	for _, a := range acts {
+		tmp, err := do(pos, a)
+		if err != nil {
+			panic(err)
+		}
+		tmp = tmp.endturn()
+		v := maxi(tmp, depth-1, min, r)
+		//fmt.Printf("%d - %f\n", depth, v)
+		if v < min {
+			min = v
+		}
+		if min <= max {
+			break
+		}
+	}
+	return min
+}
+
+func (pos Position) over() bool {
+	return pos.stars[North].ships[North].IsEmpty() || pos.stars[South].ships[South].IsEmpty()
+}
+
+func (pos Position) endturn() Position {
+	pos.player ^= 1
+	return pos
+}
+
+func (pos Position) score() float64 {
+	if pos.stars[North].ships[North].IsEmpty() {
+		return -1
+	}
+	if pos.stars[South].ships[South].IsEmpty() {
+		return 1
+	}
+	v := 0
+	w := 0
+	for _, s := range pos.stars {
+		for it := s.ships[North].Iter(); !it.Done(); it.Next() {
+			v += int(it.Piece().Size()) * it.Count()
+		}
+		for it := s.ships[South].Iter(); !it.Done(); it.Next() {
+			w += int(it.Piece().Size()) * it.Count()
+		}
+	}
+	const max = (3 + 2 + 1) * 12
+	return float64(v-w) / max
+}
+
+func shuffle(acts []Action, r *rand.Rand) {
+	for i := 0; i+1 < len(acts); i++ {
+		j := i + r.Intn(len(acts)-i)
+		acts[i], acts[j] = acts[j], acts[i]
+	}
+	//fmt.Println(acts)
 }

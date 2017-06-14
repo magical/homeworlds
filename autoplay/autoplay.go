@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	randpkg "math/rand"
+	"math/rand"
 	"os"
 
 	"github.com/magical/homeworlds"
@@ -12,33 +12,44 @@ var systemid = 2
 
 func main() {
 	g := newGame()
-	rand := randpkg.New(randpkg.NewSource(1))
+	r := rand.New(rand.NewSource(1))
 	turn := 1
 	for !g.IsOver() {
-		fmt.Println("Turn number", turn)
+		fmt.Println("\nTurn number", turn)
 		homeworlds.Print(os.Stdout, g)
-		actions := g.BasicActions()
-	retry:
-		n := rand.Intn(len(actions))
-		a := actions[n]
-		fmt.Println(a)
-		tmp := g.Copy()
-		err := do(g, a)
+		//actions := g.BasicActions()
+		//n := rand.Intn(len(actions))
+		//a := actions[n]
+		a, v := homeworlds.Minimax(homeworlds.PositionFromGame(g), r)
+		fmt.Println(a, v)
+		m := starMap(g)
+		err := do(g, m, a)
 		if err != nil {
 			fmt.Println(err)
 			break
 		}
-		catastrophe(g)
-		if g.IsOver() && g.Winner() != g.CurrentPlayer {
-			g = tmp
-			goto retry
-		}
-		g.CurrentPlayer = homeworlds.Player((int(g.CurrentPlayer) + 1) % g.NumPlayers)
+		//catastrophe(g)
+		g.EndTurn()
 		turn++
 	}
 	if g.IsOver() {
 		fmt.Println("Winner:", g.Winner())
 	}
+}
+
+func starMap(g *homeworlds.Game) []*homeworlds.Star {
+	stars := g.SortedStars()
+	m := make([]*homeworlds.Star, 2, len(g.Stars))
+	m[0] = g.Homeworlds[homeworlds.North]
+	m[1] = g.Homeworlds[homeworlds.South]
+	for _, name := range stars {
+		s := g.Stars[name]
+		if s.IsHomeworld {
+			continue
+		}
+		m = append(m, s)
+	}
+	return m
 }
 
 func newGame() *homeworlds.Game {
@@ -76,12 +87,11 @@ func newGame() *homeworlds.Game {
 	return game
 }
 
-func do(g *homeworlds.Game, a homeworlds.Action) error {
-	stars := g.SortedStars()
+func do(g *homeworlds.Game, stars []*homeworlds.Star, a homeworlds.Action) error {
 	if a.System() >= len(stars) {
 		return fmt.Errorf("no such system %d", a.System())
 	}
-	star := g.Stars[stars[a.System()]]
+	star := stars[a.System()]
 	switch a.Type() {
 	case homeworlds.Pass:
 		return nil
@@ -93,7 +103,7 @@ func do(g *homeworlds.Game, a homeworlds.Action) error {
 		if a.ToSystem() >= len(stars) {
 			return fmt.Errorf("no such system %d", a.ToSystem())
 		}
-		toStar := g.Stars[stars[a.ToSystem()]]
+		toStar := stars[a.ToSystem()]
 		return g.Move(a.Ship(), star, toStar)
 	case homeworlds.Attack:
 		target := homeworlds.North
