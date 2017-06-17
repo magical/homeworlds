@@ -530,9 +530,9 @@ func Minimax(pos Position, r *rand.Rand) (Action, float64) {
 	const depth = 5
 	acts := pos.BasicActions()
 	shuffle(acts, r)
+	var maxact Action
+	max := -1.0
 	if pos.CurrentPlayer() == North {
-		var maxact Action
-		max := -1.0
 		for _, a := range acts {
 			tmp, err := do(pos, a)
 			if err != nil {
@@ -540,17 +540,14 @@ func Minimax(pos Position, r *rand.Rand) (Action, float64) {
 			}
 			tmp.catastrophes()
 			tmp = tmp.endturn()
-			v := mini(tmp, pos, depth-1, max, r)
+			v := -minimax(tmp, pos, depth-1, -max, r)
 			//fmt.Printf("%d + %f\n", depth, v)
 			if v > max {
 				max = v
 				maxact = a
 			}
 		}
-		return maxact, max
 	} else {
-		var minact Action
-		min := 1.0
 		for _, a := range acts {
 			tmp, err := do(pos, a)
 			if err != nil {
@@ -558,58 +555,25 @@ func Minimax(pos Position, r *rand.Rand) (Action, float64) {
 			}
 			tmp.catastrophes()
 			tmp = tmp.endturn()
-			v := maxi(tmp, pos, depth-1, min, r)
+			v := -minimax(tmp, pos, depth-1, -max, r)
 			//fmt.Printf("%d - %f\n", depth, v)
-			if v < min {
-				min = v
-				minact = a
+			if v > max {
+				max = v
+				maxact = a
 			}
 		}
-		return minact, min
 	}
+	return maxact, max
 }
 
-func maxi(pos, last Position, depth int, min float64, r *rand.Rand) float64 {
+func minimax(pos, last Position, depth int, min float64, r *rand.Rand) float64 {
 	if pos.over() {
-		return pos.score()
+		return pos.score() * float64(depth+1)
 	}
 	if depth <= 0 {
 		return pos.score()
 	}
 	max := -1.0
-	acts := pos.BasicActions()
-	shuffle(acts, r)
-	for _, a := range acts {
-		tmp, err := do(pos, a)
-		if err != nil {
-			panic(err)
-		}
-		if a.Type() == Attack && tmp.Equal(last) {
-			//fmt.Println("action returns to an earlier state:", a)
-			continue
-		}
-		tmp.catastrophes()
-		tmp = tmp.endturn()
-		v := mini(tmp, pos, depth-1, max, r)
-		//fmt.Printf("%d + %f\n", depth, v)
-		if v > max {
-			max = v
-		}
-		if max >= min {
-			break
-		}
-	}
-	return max
-}
-
-func mini(pos, last Position, depth int, max float64, r *rand.Rand) float64 {
-	if pos.over() {
-		return pos.score()
-	}
-	if depth <= 0 {
-		return pos.score()
-	}
-	min := 1.0
 	acts := pos.BasicActions()
 	shuffle(acts, r)
 	for _, a := range acts {
@@ -625,16 +589,16 @@ func mini(pos, last Position, depth int, max float64, r *rand.Rand) float64 {
 		}
 		tmp.catastrophes()
 		tmp = tmp.endturn()
-		v := maxi(tmp, pos, depth-1, min, r)
-		//fmt.Printf("%d - %f\n", depth, v)
-		if v < min {
-			min = v
+		v := -minimax(tmp, pos, depth-1, -max, r)
+		//fmt.Printf("%d %f\n", depth, v)
+		if v > max {
+			max = v
 		}
-		if min <= max {
+		if max >= min {
 			break
 		}
 	}
-	return min
+	return max
 }
 
 func (pos Position) over() bool {
@@ -650,10 +614,10 @@ var points = []int{0, 1, 3, 9}
 
 func (pos Position) score() float64 {
 	if pos.stars[North].ships[North].IsEmpty() {
-		return -1
+		return float64(pos.player)*2 - 1
 	}
 	if pos.stars[South].ships[South].IsEmpty() {
-		return 1
+		return -float64(pos.player)*2 + 1
 	}
 	var north Bank
 	var south Bank
@@ -673,8 +637,13 @@ func (pos Position) score() float64 {
 	// +10 points for having a large at homeworld
 	// +10 points for monopolizing a color
 	// +points for being few hops from opponent's homeworld
-	const max = (9 + 3 + 1) * 12
-	return float64(v-w) / max
+	// +points for being the current player
+	const max = 1 + (1+3+9)*12
+	score := float64(v-w) / max
+	if pos.player == 1 {
+		score = -score
+	}
+	return score
 }
 
 func shuffle(acts []Action, r *rand.Rand) {
