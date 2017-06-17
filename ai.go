@@ -9,9 +9,6 @@ import (
 	"strings"
 )
 
-type AI struct {
-}
-
 type Position struct {
 	bank   Bank
 	stars  []Dwarf
@@ -526,47 +523,47 @@ func (pos Position) String() string {
 	return buf.String()
 }
 
-func Minimax(pos Position, r *rand.Rand) (Action, float64) {
-	const depth = 5
+type AI struct {
+	r     *rand.Rand
+	depth int
+	trace bool
+}
+
+func NewAI() *AI {
+	return &AI{
+		r:     rand.New(rand.NewSource(1)),
+		depth: 5,
+		trace: true,
+	}
+}
+
+func (ai *AI) Minimax(pos Position) (Action, float64) {
 	acts := pos.BasicActions()
-	shuffle(acts, r)
+	shuffle(acts, ai.r)
 	var maxact Action
 	max := -1.0
-	if pos.CurrentPlayer() == North {
-		for _, a := range acts {
-			tmp, err := do(pos, a)
-			if err != nil {
-				panic(err)
-			}
-			tmp.catastrophes()
-			tmp = tmp.endturn()
-			v := -minimax(tmp, pos, depth-1, -max, r)
-			//fmt.Printf("%d + %f\n", depth, v)
-			if v > max {
-				max = v
-				maxact = a
-			}
+	depth := ai.depth
+	for _, a := range acts {
+		tmp, err := do(pos, a)
+		if err != nil {
+			panic(err)
 		}
-	} else {
-		for _, a := range acts {
-			tmp, err := do(pos, a)
-			if err != nil {
-				panic(err)
-			}
-			tmp.catastrophes()
-			tmp = tmp.endturn()
-			v := -minimax(tmp, pos, depth-1, -max, r)
-			//fmt.Printf("%d - %f\n", depth, v)
-			if v > max {
-				max = v
-				maxact = a
-			}
+		tmp.catastrophes()
+		tmp = tmp.endturn()
+		v := -ai.minimax(tmp, pos, depth-1, -max)
+		//fmt.Printf("%d %c %f\n", depth, "+-"[pos.player], v)
+		if ai.trace {
+			log.Printf("%*s player=%d depth=%d v=%f min= max=%f move=%s", ai.depth-depth, "", pos.CurrentPlayer(), depth, v, max, a)
+		}
+		if v > max {
+			max = v
+			maxact = a
 		}
 	}
 	return maxact, max
 }
 
-func minimax(pos, last Position, depth int, min float64, r *rand.Rand) float64 {
+func (ai *AI) minimax(pos, last Position, depth int, min float64) float64 {
 	if pos.over() {
 		return pos.score() * float64(depth+1)
 	}
@@ -575,7 +572,7 @@ func minimax(pos, last Position, depth int, min float64, r *rand.Rand) float64 {
 	}
 	max := -1.0
 	acts := pos.BasicActions()
-	shuffle(acts, r)
+	shuffle(acts, ai.r)
 	for _, a := range acts {
 		tmp, err := do(pos, a)
 		if err != nil {
@@ -589,7 +586,10 @@ func minimax(pos, last Position, depth int, min float64, r *rand.Rand) float64 {
 		}
 		tmp.catastrophes()
 		tmp = tmp.endturn()
-		v := -minimax(tmp, pos, depth-1, -max, r)
+		v := -ai.minimax(tmp, pos, depth-1, -max)
+		if ai.trace {
+			log.Printf("%*s player=%d depth=%d v=%f min=%f max=%f move=%s", ai.depth-depth, "", pos.CurrentPlayer(), depth, v, min, max, a)
+		}
 		//fmt.Printf("%d %f\n", depth, v)
 		if v > max {
 			max = v
@@ -647,7 +647,7 @@ func (pos Position) score() float64 {
 }
 
 func shuffle(acts []Action, r *rand.Rand) {
-	for i := 0; i+1 < len(acts); i++ {
+	for i := 0; 1 < len(acts)-i; i++ {
 		j := i + r.Intn(len(acts)-i)
 		acts[i], acts[j] = acts[j], acts[i]
 	}
@@ -686,8 +686,8 @@ func (pos *Position) catastrophes() {
 					id--
 				}
 			} else if star.ships[0].IsEmpty() && star.ships[1].IsEmpty() {
-				pos.bank.add(star.pieces)
 				if id >= 2 {
+					pos.bank.add(star.pieces)
 					pos.stars = append(pos.stars[:id], pos.stars[id+1:]...)
 					id--
 				}

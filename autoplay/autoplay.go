@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
 
 	"github.com/magical/homeworlds"
@@ -12,7 +11,7 @@ var systemid = 2
 
 func main() {
 	g := newGame()
-	r := rand.New(rand.NewSource(1))
+	ai := homeworlds.NewAI()
 	turn := 1
 	for !g.IsOver() {
 		fmt.Println("\nTurn number", turn)
@@ -20,8 +19,8 @@ func main() {
 		//actions := g.BasicActions()
 		//n := rand.Intn(len(actions))
 		//a := actions[n]
-		a, v := homeworlds.Minimax(homeworlds.PositionFromGame(g), r)
-		fmt.Println(a, v)
+		a, v := ai.Minimax(homeworlds.PositionFromGame(g))
+		fmt.Println("Action:", a, "Score:", v)
 		m := starMap(g)
 		err := do(g, m, a)
 		if err != nil {
