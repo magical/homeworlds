@@ -533,7 +533,7 @@ func NewAI() *AI {
 	return &AI{
 		r:     rand.New(rand.NewSource(1)),
 		depth: 5,
-		trace: true,
+		trace: false,
 	}
 }
 
@@ -541,7 +541,7 @@ func (ai *AI) Minimax(pos Position) (Action, float64) {
 	acts := pos.BasicActions()
 	shuffle(acts, ai.r)
 	var maxact Action
-	max := -1.0
+	max := -5.0
 	depth := ai.depth
 	for _, a := range acts {
 		tmp, err := do(pos, a)
@@ -570,7 +570,7 @@ func (ai *AI) minimax(pos, last Position, depth int, min float64) float64 {
 	if depth <= 0 {
 		return pos.score()
 	}
-	max := -1.0
+	max := -5.0
 	acts := pos.BasicActions()
 	shuffle(acts, ai.r)
 	for _, a := range acts {
