@@ -619,27 +619,56 @@ func (pos Position) score() float64 {
 	if pos.stars[South].ships[South].IsEmpty() {
 		return -float64(pos.player)*2 + 1
 	}
+
+	v := 0
+	w := 0
+
+	// +5 points for being the current player
+	if pos.CurrentPlayer() == North {
+		v += 5
+	} else {
+		w += 5
+	}
+
+	// +10 points for having a large at homeworld
+	if pos.stars[North].ships[North].Largest() == Large {
+		v += 10
+	}
+	if pos.stars[South].ships[South].Largest() == Large {
+		w += 10
+	}
+
+	// +1 point for each small ship
+	// +3 points for each medium ship
+	// +9 points for each large ship
 	var north Bank
 	var south Bank
 	for _, s := range pos.stars {
 		north.add(s.ships[North])
 		south.add(s.ships[South])
 	}
-	v := 0
-	w := 0
 	for it := north.Iter(); !it.Done(); it.Next() {
 		v += points[it.Piece().Size()] * it.Count()
 	}
 	for it := south.Iter(); !it.Done(); it.Next() {
 		w += points[it.Piece().Size()] * it.Count()
 	}
+
+	// +30 points for monopolizing a color
+	for c := Color(0); c < Color(4); c++ {
+		if north.HasColor(c) && !south.HasColor(c) {
+			v += 30
+		}
+		if south.HasColor(c) && !north.HasColor(c) {
+			w += 30
+		}
+	}
+
 	// TODO:
-	// +10 points for having a large at homeworld
-	// +10 points for monopolizing a color
 	// +points for being few hops from opponent's homeworld
-	// +points for being the current player
-	const max = 1 + (1+3+9)*12
-	score := float64(v-w) / max
+
+	const max = 5 + 10 + (1+3+9)*12 + 30
+	score := float64(v-w) / (max + 1)
 	if pos.player == 1 {
 		score = -score
 	}
