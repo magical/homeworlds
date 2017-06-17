@@ -540,7 +540,7 @@ func Minimax(pos Position, r *rand.Rand) (Action, float64) {
 			}
 			tmp.catastrophes()
 			tmp = tmp.endturn()
-			v := mini(tmp, depth-1, max, r)
+			v := mini(tmp, pos, depth-1, max, r)
 			//fmt.Printf("%d + %f\n", depth, v)
 			if v > max {
 				max = v
@@ -558,7 +558,7 @@ func Minimax(pos Position, r *rand.Rand) (Action, float64) {
 			}
 			tmp.catastrophes()
 			tmp = tmp.endturn()
-			v := maxi(tmp, depth-1, min, r)
+			v := maxi(tmp, pos, depth-1, min, r)
 			//fmt.Printf("%d - %f\n", depth, v)
 			if v < min {
 				min = v
@@ -569,7 +569,7 @@ func Minimax(pos Position, r *rand.Rand) (Action, float64) {
 	}
 }
 
-func maxi(pos Position, depth int, min float64, r *rand.Rand) float64 {
+func maxi(pos, last Position, depth int, min float64, r *rand.Rand) float64 {
 	if pos.over() {
 		return pos.score()
 	}
@@ -584,9 +584,13 @@ func maxi(pos Position, depth int, min float64, r *rand.Rand) float64 {
 		if err != nil {
 			panic(err)
 		}
+		if a.Type() == Attack && tmp.Equal(last) {
+			//fmt.Println("action returns to an earlier state:", a)
+			continue
+		}
 		tmp.catastrophes()
 		tmp = tmp.endturn()
-		v := mini(tmp, depth-1, max, r)
+		v := mini(tmp, pos, depth-1, max, r)
 		//fmt.Printf("%d + %f\n", depth, v)
 		if v > max {
 			max = v
@@ -598,7 +602,7 @@ func maxi(pos Position, depth int, min float64, r *rand.Rand) float64 {
 	return max
 }
 
-func mini(pos Position, depth int, max float64, r *rand.Rand) float64 {
+func mini(pos, last Position, depth int, max float64, r *rand.Rand) float64 {
 	if pos.over() {
 		return pos.score()
 	}
@@ -613,9 +617,15 @@ func mini(pos Position, depth int, max float64, r *rand.Rand) float64 {
 		if err != nil {
 			panic(err)
 		}
+		if a.Type() == Attack && tmp.Equal(last) {
+			if depth == 4 {
+				fmt.Println("action returns to an earlier state:", a)
+			}
+			continue
+		}
 		tmp.catastrophes()
 		tmp = tmp.endturn()
-		v := maxi(tmp, depth-1, min, r)
+		v := maxi(tmp, pos, depth-1, min, r)
 		//fmt.Printf("%d - %f\n", depth, v)
 		if v < min {
 			min = v
@@ -636,6 +646,8 @@ func (pos Position) endturn() Position {
 	return pos
 }
 
+var points = []int{0, 1, 3, 9}
+
 func (pos Position) score() float64 {
 	if pos.stars[North].ships[North].IsEmpty() {
 		return -1
@@ -643,17 +655,25 @@ func (pos Position) score() float64 {
 	if pos.stars[South].ships[South].IsEmpty() {
 		return 1
 	}
+	var north Bank
+	var south Bank
+	for _, s := range pos.stars {
+		north.add(s.ships[North])
+		south.add(s.ships[South])
+	}
 	v := 0
 	w := 0
-	for _, s := range pos.stars {
-		for it := s.ships[North].Iter(); !it.Done(); it.Next() {
-			v += int(it.Piece().Size()) * it.Count()
-		}
-		for it := s.ships[South].Iter(); !it.Done(); it.Next() {
-			w += int(it.Piece().Size()) * it.Count()
-		}
+	for it := north.Iter(); !it.Done(); it.Next() {
+		v += points[it.Piece().Size()] * it.Count()
 	}
-	const max = (3 + 2 + 1) * 12
+	for it := south.Iter(); !it.Done(); it.Next() {
+		w += points[it.Piece().Size()] * it.Count()
+	}
+	// TODO:
+	// +10 points for having a large at homeworld
+	// +10 points for monopolizing a color
+	// +points for being few hops from opponent's homeworld
+	const max = (9 + 3 + 1) * 12
 	return float64(v-w) / max
 }
 
@@ -710,4 +730,19 @@ func (pos *Position) catastrophes() {
 func (b Bank) ColorCount(c Color) int {
 	x := b.bits >> (c * 6) & 63
 	return int(x>>4) + int(x>>2&3) + int(x&3)
+}
+
+func (pos Position) Equal(other Position) bool {
+	if pos.bank != other.bank {
+		return false
+	}
+	if len(pos.stars) != len(other.stars) {
+		return false
+	}
+	for id := range pos.stars {
+		if pos.stars[id] != other.stars[id] {
+			return false
+		}
+	}
+	return true
 }
