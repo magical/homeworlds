@@ -13,13 +13,15 @@ func main() {
 	g := newGame()
 	ai := homeworlds.NewAI()
 	turn := 1
+	var last homeworlds.Action
 	for !g.IsOver() {
 		fmt.Println("\nTurn number", turn)
 		homeworlds.Print(os.Stdout, g)
 		//actions := g.BasicActions()
 		//n := rand.Intn(len(actions))
 		//a := actions[n]
-		a, v := ai.Minimax(homeworlds.PositionFromGame(g))
+		pos := homeworlds.PositionFromGame(g)
+		a, v := ai.Minimax(pos, last)
 		fmt.Println("Action:", a, "Score:", v)
 		m := starMap(g)
 		err := do(g, m, a)
@@ -29,6 +31,7 @@ func main() {
 		}
 		catastrophe(g)
 		g.EndTurn()
+		last = a
 		turn++
 	}
 	if g.IsOver() {

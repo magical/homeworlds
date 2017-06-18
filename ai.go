@@ -102,13 +102,14 @@ func (a Action) ToSystem() int    { return int(a.arg) }
 
 func (t ActionType) String() string {
 	return map[ActionType]string{
-		Catastrope: "Catastrope",
+		Pass:       "Pass",
 		Build:      "Build",
 		Move:       "Move",
 		Discover:   "Discover",
-		Attack:     "Attack",
 		Trade:      "Trade",
-		Pass:       "Pass",
+		Attack:     "Attack",
+		Catastrope: "Catastrope",
+		Sacrifice:  "Sacrifice",
 	}[t]
 }
 
@@ -121,6 +122,10 @@ func (a Action) String() string {
 		arg = a.ToSystem()
 	case Trade:
 		arg = a.NewShip()
+	case Build, Attack:
+		if a.arg == 0 {
+			arg = ""
+		}
 	}
 	return fmt.Sprintf("%s %d %s %v", a.Type(), a.System(), a.Ship(), arg)
 }
@@ -392,6 +397,7 @@ func (pos Position) build(p Piece, s int) Position {
 	pos.bank.Take(p)
 	pl := pos.player & 1
 	pos.stars[s].ships[pl].Put(p)
+	pos.gc(s, true)
 	return pos
 }
 
@@ -409,6 +415,7 @@ func (pos Position) trade(p, q Piece, s int) Position {
 	pl := pos.player & 1
 	pos.stars[s].ships[pl].Take(p)
 	pos.stars[s].ships[pl].Put(q)
+	pos.gc(s, true)
 	return pos
 }
 
@@ -417,7 +424,8 @@ func (pos Position) move(p Piece, s, r int) Position {
 	pl := pos.player & 1
 	pos.stars[s].ships[pl].Take(p)
 	pos.stars[r].ships[pl].Put(p)
-	return pos.gc(s)
+	pos.gcmove(s, r)
+	return pos
 }
 
 func (pos Position) attack(p Piece, s int) Position {
@@ -425,6 +433,7 @@ func (pos Position) attack(p Piece, s int) Position {
 	pl := pos.player & 1
 	pos.stars[s].ships[pl].Put(p)
 	pos.stars[s].ships[pl^1].Take(p)
+	// can't result in catastrophe
 	return pos
 }
 
@@ -438,23 +447,66 @@ func (pos Position) discover(p Piece, s int, q Piece) Position {
 	pl := pos.player & 1
 	pos.stars[s].ships[pl].Take(p)
 	pos.stars[r].ships[pl].Put(p)
-	return pos.gc(s)
+	pos.gcmove(s, r)
+	return pos
 }
 
-// delete star s if it is empty
-func (pos Position) gc(s int) Position {
-	if s < 2 {
-		return pos
+// delete star if it is empty
+// if catastrophe is true, check for catastrophes first
+func (pos *Position) gc(id int, catastrophe bool) {
+	star := &pos.stars[id]
+	if catastrophe {
+		// check for catastrophe
+		pieces := star.pieces
+		pieces.add(star.ships[0])
+		pieces.add(star.ships[1])
+		var mask uint32
+		for c := Color(0); c < Color(4); c++ {
+			if pieces.ColorCount(c) >= 4 {
+				mask |= uint32(63) << (c * 6)
+			}
+		}
+		if mask != 0 {
+			// XXX ugly
+			// delete affected star pieces
+			pos.bank.bits += star.pieces.bits & mask
+			star.pieces.bits &^= mask
+			// delete affected ships
+			pos.bank.bits += star.ships[0].bits & mask
+			pos.bank.bits += star.ships[1].bits & mask
+			star.ships[0].bits &^= mask
+			star.ships[1].bits &^= mask
+			if star.pieces.IsEmpty() {
+				pos.bank.add(star.ships[North])
+				pos.bank.add(star.ships[South])
+				goto delete
+			}
+		}
 	}
-	star := pos.stars[s]
+
+	// delete if empty
 	if star.ships[North].IsEmpty() && star.ships[South].IsEmpty() {
-		oldstars := pos.stars
-		pos.stars = make([]Dwarf, len(pos.stars)-1)
-		copy(pos.stars, oldstars[:s])
-		copy(pos.stars[s:], oldstars[s+1:])
 		pos.bank.add(star.pieces)
+		goto delete
 	}
-	return pos
+	return
+
+delete:
+	if id >= 2 {
+		pos.stars = append(pos.stars[:id], pos.stars[id+1:]...)
+	}
+}
+
+func (pos *Position) gcmove(s, r int) {
+	// delete stars in reverse order to prevent
+	// indices from changing
+	if s < r {
+		pos.gc(r, true)
+		pos.gc(s, false)
+	} else {
+		pos.gc(s, false)
+		pos.gc(r, true)
+	}
 }
 
 // add the contents of another bank to this one
@@ -468,7 +520,8 @@ func (pos Position) sacrifice(p Piece, s int) Position {
 	pos.bank.Put(p)
 	pl := pos.player & 1
 	pos.stars[s].ships[pl].Take(p)
-	return pos.gc(s)
+	pos.gc(s, false)
+	return pos
 }
 
 func (pos Position) sanityCheck() bool {
@@ -542,7 +595,7 @@ func NewAI() *AI {
 	}
 }
 
-func (ai *AI) Minimax(pos Position) (Action, float64) {
+func (ai *AI) Minimax(pos Position, last Action) (Action, float64) {
 	acts := pos.BasicActions()
 	shuffle(acts, ai.r)
 	var maxact Action
@@ -556,7 +609,11 @@ func (ai *AI) Minimax(pos Position) (Action, float64) {
 		if err != nil {
 			panic(err)
 		}
-		tmp.catastrophes()
+		if a.Type() == Attack && a == last {
+			fmt.Println("Action returns to an earlier state:", a)
+			continue
+		}
+		//tmp.catastrophes()
 		tmp = tmp.endturn()
 		v := -ai.minimax(tmp, pos, depth-1, -max)
 		//fmt.Printf("%d %c %f\n", depth, "+-"[pos.player], v)
@@ -601,7 +658,7 @@ func (ai *AI) minimax(pos, last Position, depth int, min float64) float64 {
 			}
 			continue
 		}
-		tmp.catastrophes()
+		//tmp.catastrophes()
 		tmp = tmp.endturn()
 		v := -ai.minimax(tmp, pos, depth-1, -max)
 		if ai.trace {
@@ -655,6 +712,14 @@ func (pos Position) score() float64 {
 		w += 10
 	}
 
+	// +50 points for occupying the opponent's homeworld
+	if !pos.stars[South].ships[North].IsEmpty() {
+		v += 10
+	}
+	if !pos.stars[North].ships[South].IsEmpty() {
+		w += 10
+	}
+
 	// +1 point for each small ship
 	// +3 points for each medium ship
 	// +9 points for each large ship
@@ -683,8 +748,10 @@ func (pos Position) score() float64 {
 
 	// TODO:
 	// +points for being few hops from opponent's homeworld
+	// +points for controlling a star
+	// +50 points for still having both stars in your homeworld
 
-	const max = 5 + 10 + (1+3+9)*12 + 30
+	const max = 5 + 10 + 50 + (1+3+9)*12 + 30
 	score := float64(v-w) / (max + 1)
 	if pos.player == 1 {
 		score = -score
