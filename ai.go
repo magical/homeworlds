@@ -355,7 +355,7 @@ func appendSacrifice(actions []SacrificeAction, pos *Position, sa SacrificeActio
 	sa = sa.append(a)
 	actions = append(actions, sa)
 	if n > 1 {
-		tmp, err := do(*pos, a)
+		tmp, err := pos.do(a)
 		if err != nil {
 			panic(err)
 		}
@@ -370,7 +370,7 @@ func (sa SacrificeAction) append(a Action) SacrificeAction {
 	return sa
 }
 
-func do(pos Position, a Action) (Position, error) {
+func (pos Position) do(a Action) (Position, error) {
 	switch a.Type() {
 	case Pass:
 		return pos, nil
@@ -604,7 +604,7 @@ func (ai *AI) Minimax(pos Position, last Action) (Action, float64) {
 	ai.visited = 0
 	ai.evaluated = 0
 	for _, a := range acts {
-		tmp, err := do(pos, a)
+		tmp, err := pos.do(a)
 		if err != nil {
 			panic(err)
 		}
@@ -624,6 +624,7 @@ func (ai *AI) Minimax(pos Position, last Action) (Action, float64) {
 			maxact = a
 		}
 	}
+
 	d := time.Since(t)
 	ms := float64(d) / float64(time.Millisecond)
 	log.Printf("visited=%d (%.1f/ms) evaluated=%d (%.1f/ms) in %s",
@@ -647,7 +648,7 @@ func (ai *AI) minimax(pos, last Position, depth int, min float64) float64 {
 	acts := pos.BasicActions()
 	shuffle(acts, ai.r)
 	for _, a := range acts {
-		tmp, err := do(pos, a)
+		tmp, err := pos.do(a)
 		if err != nil {
 			panic(err)
 		}
