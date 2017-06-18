@@ -141,19 +141,19 @@ func (g *Game) BasicActions() []Action {
 	return PositionFromGame(g).BasicActions()
 }
 
-func (g Position) BasicActions() []Action {
+func (pos Position) BasicActions() []Action {
 	var actions []Action
 	actions = append(actions, Action{typ: uint8(Pass)})
 
-	for id, s := range g.stars {
-		ships := s.Ships(g.CurrentPlayer())
+	for id, s := range pos.stars {
+		ships := s.Ships(pos.CurrentPlayer())
 		powers := s.pieces
 		powers.add(ships)
 
 		if powers.HasColor(Green) {
 			for c := Color(0); c < Color(4); c++ {
-				if ships.HasColor(c) && g.bank.HasColor(c) {
-					q := piece(g.bank.SmallestOfColor(c), c)
+				if ships.HasColor(c) && pos.bank.HasColor(c) {
+					q := piece(pos.bank.SmallestOfColor(c), c)
 					actions = append(actions, mkaction(Build, q, id, 0))
 				}
 			}
@@ -165,7 +165,7 @@ func (g Position) BasicActions() []Action {
 					p := it.Piece()
 					for c := Color(0); c < Color(4); c++ {
 						q := piece(p.Size(), c)
-						if c != p.Color() && g.bank.Has(q) {
+						if c != p.Color() && pos.bank.Has(q) {
 							actions = append(actions, mkaction(Trade, p, id, q))
 						}
 					}
@@ -175,7 +175,7 @@ func (g Position) BasicActions() []Action {
 
 		if powers.HasColor(Red) {
 			size := ships.Largest()
-			ships := s.OtherShips(g.CurrentPlayer())
+			ships := s.OtherShips(pos.CurrentPlayer())
 			for it := ships.Iter(); !it.Done(); it.Next() {
 				if it.Count() > 0 {
 					q := it.Piece()
@@ -187,7 +187,7 @@ func (g Position) BasicActions() []Action {
 		}
 
 		if powers.HasColor(Yellow) {
-			for rid, r := range g.stars {
+			for rid, r := range pos.stars {
 				if s.Connects(&r) {
 					for it := ships.Iter(); !it.Done(); it.Next() {
 						if p := it.Piece(); it.Count() > 0 {
@@ -197,7 +197,7 @@ func (g Position) BasicActions() []Action {
 				}
 			}
 
-			for it := g.bank.Iter(); !it.Done(); it.Next() {
+			for it := pos.bank.Iter(); !it.Done(); it.Next() {
 				if it.Count() > 0 {
 					q := it.Piece()
 					if s.WouldConnect(q) {
@@ -254,7 +254,8 @@ func (b Bank) sizes() uint {
 type SacrificeAction struct {
 	Ship    Piece
 	System  uint8
-	Actions []Action
+	Num     uint8
+	Actions [3]Action
 }
 
 func (g *Game) SacrificeActions() []SacrificeAction {
@@ -278,49 +279,49 @@ func (pos Position) SacrificeActions() []SacrificeAction {
 	return actions
 }
 
-func sacrifice(g *Position, actions []SacrificeAction, sa SacrificeAction, n int) []SacrificeAction {
-	//if !g.sanityCheck() {
+func sacrifice(pos *Position, actions []SacrificeAction, sa SacrificeAction, n int) []SacrificeAction {
+	//if !pos.sanityCheck() {
 	//	return actions
 	//}
 	switch sa.Ship.Color() {
 	case Red:
-		for id, s := range g.stars {
-			ships := s.Ships(g.CurrentPlayer())
-			enemy := s.OtherShips(g.CurrentPlayer())
+		for id, s := range pos.stars {
+			ships := s.Ships(pos.CurrentPlayer())
+			enemy := s.OtherShips(pos.CurrentPlayer())
 			if !ships.IsEmpty() {
 				size := ships.Largest()
 				for it := enemy.Iter(); !it.Done(); it.Next() {
 					if it.Count() > 0 && it.Piece().Size() <= size {
 						a := mkaction(Attack, it.Piece(), id, 0)
-						actions = appendSacrifice(actions, g, sa, a, n)
+						actions = appendSacrifice(actions, pos, sa, a, n)
 					}
 				}
 			}
 		}
 
 	case Yellow:
-		for id, s := range g.stars {
-			ships := s.Ships(g.CurrentPlayer())
+		for id, s := range pos.stars {
+			ships := s.Ships(pos.CurrentPlayer())
 			if !ships.IsEmpty() {
-				for rid, r := range g.stars {
+				for rid, r := range pos.stars {
 					if s.Connects(&r) {
 						for it := ships.Iter(); !it.Done(); it.Next() {
 							if it.Count() > 0 {
 								a := mkmove(it.Piece(), id, rid)
-								actions = appendSacrifice(actions, g, sa, a, n)
+								actions = appendSacrifice(actions, pos, sa, a, n)
 							}
 						}
 					}
 				}
 
-				for it := g.bank.Iter(); !it.Done(); it.Next() {
+				for it := pos.bank.Iter(); !it.Done(); it.Next() {
 					q := it.Piece()
 					if it.Count() > 0 && s.WouldConnect(q) {
 						for it := ships.Iter(); !it.Done(); it.Next() {
 							p := it.Piece()
 							if it.Count() > 0 {
 								a := mkaction(Discover, p, id, q)
-								actions = appendSacrifice(actions, g, sa, a, n)
+								actions = appendSacrifice(actions, pos, sa, a, n)
 							}
 						}
 					}
@@ -329,18 +330,18 @@ func sacrifice(g *Position, actions []SacrificeAction, sa SacrificeAction, n int
 		}
 
 	case Green:
-		for id, s := range g.stars {
-			ships := s.Ships(g.CurrentPlayer())
+		for id, s := range pos.stars {
+			ships := s.Ships(pos.CurrentPlayer())
 			if !ships.IsEmpty() {
 				for c := Color(0); c < Color(4); c++ {
-					if ships.HasColor(c) && g.bank.HasColor(c) {
-						q := piece(g.bank.SmallestOfColor(c), c)
-						if !g.bank.Has(q) {
-							log.Println(q, ships, g.bank)
+					if ships.HasColor(c) && pos.bank.HasColor(c) {
+						q := piece(pos.bank.SmallestOfColor(c), c)
+						if !pos.bank.Has(q) {
+							log.Println(q, ships, pos.bank)
 							panic("oops")
 						}
 						a := mkaction(Build, q, id, 0)
-						actions = appendSacrifice(actions, g, sa, a, n)
+						actions = appendSacrifice(actions, pos, sa, a, n)
 					}
 				}
 			}
@@ -364,10 +365,8 @@ func appendSacrifice(actions []SacrificeAction, pos *Position, sa SacrificeActio
 }
 
 func (sa SacrificeAction) append(a Action) SacrificeAction {
-	actions := sa.Actions
-	sa.Actions = make([]Action, len(actions)+1)
-	copy(sa.Actions, actions)
-	sa.Actions[len(actions)] = a
+	sa.Actions[sa.Num] = a
+	sa.Num++
 	return sa
 }
 
