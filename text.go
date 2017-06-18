@@ -66,7 +66,10 @@ func Print(w io.Writer, g *Game) error {
 	for i := 0; i < g.NumPlayers; i++ {
 		pl := Player(i)
 		fmt.Fprintf(w, "%s's fleet:\n", pl)
-		for h, s := range g.Homeworlds {
+		for j := 0; j < g.NumPlayers; j++ {
+			// TODO: print player's own homeworld first
+			h := Player(j)
+			s := g.Homeworlds[h]
 			if len(s.Ships[pl]) == 0 {
 				continue
 			}
