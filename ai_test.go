@@ -42,7 +42,6 @@ func TestSacrificeActions(t *testing.T) {
 
 func BenchmarkSacrificeActionsNorth(b *testing.B) {
 	pos := PositionFromGame(game)
-	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = pos.SacrificeActions()
 	}
@@ -52,8 +51,15 @@ func BenchmarkSacrificeActionsSouth(b *testing.B) {
 	game := game.Copy()
 	game.EndTurn()
 	pos := PositionFromGame(game)
-	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = pos.SacrificeActions()
+	}
+}
+
+func BenchmarkMinimax(b *testing.B) {
+	pos := PositionFromGame(game)
+	for i := 0; i < b.N; i++ {
+		ai := NewAI()
+		ai.Minimax(pos, Action{})
 	}
 }
