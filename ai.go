@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
 type Position struct {
@@ -527,6 +528,10 @@ type AI struct {
 	r     *rand.Rand
 	depth int
 	trace bool
+
+	// stats
+	evaluated int64
+	visited   int64
 }
 
 func NewAI() *AI {
@@ -543,6 +548,9 @@ func (ai *AI) Minimax(pos Position) (Action, float64) {
 	var maxact Action
 	max := -5.0
 	depth := ai.depth
+	t := time.Now()
+	ai.visited = 0
+	ai.evaluated = 0
 	for _, a := range acts {
 		tmp, err := do(pos, a)
 		if err != nil {
@@ -560,14 +568,23 @@ func (ai *AI) Minimax(pos Position) (Action, float64) {
 			maxact = a
 		}
 	}
+	d := time.Since(t)
+	ms := float64(d) / float64(time.Millisecond)
+	log.Printf("visited=%d (%.1f/ms) evaluated=%d (%.1f/ms) in %s",
+		ai.visited, float64(ai.visited)/ms,
+		ai.evaluated, float64(ai.evaluated)/ms,
+		d)
 	return maxact, max
 }
 
 func (ai *AI) minimax(pos, last Position, depth int, min float64) float64 {
+	ai.visited++
 	if pos.over() {
+		ai.evaluated++
 		return pos.score() * float64(depth+1)
 	}
 	if depth <= 0 {
+		ai.evaluated++
 		return pos.score()
 	}
 	max := -5.0
