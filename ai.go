@@ -649,6 +649,7 @@ func (ai *AI) Minimax(pos Position, last BasicAction) (Action, float64) {
 	ai.evaluated = 0
 
 	var maxact Action
+	min := 5.0
 	max := -5.0
 	depth := ai.depth
 	ply := 1
@@ -668,7 +669,7 @@ func (ai *AI) Minimax(pos Position, last BasicAction) (Action, float64) {
 			continue
 		}
 		tmp.endturn()
-		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max)
+		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max, -min)
 		//fmt.Printf("%d %c %f\n", depth, "+-"[pos.player], v)
 		if ply <= ai.trace {
 			log.Printf("%*s player=%d ply=%d depth=%d v=%f min= max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, max, a)
@@ -688,7 +689,7 @@ func (ai *AI) Minimax(pos Position, last BasicAction) (Action, float64) {
 			tmp = tmp.do(a.actions[i])
 		}
 		tmp.endturn()
-		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max)
+		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max, -min)
 		if ply <= ai.trace {
 			log.Printf("%*s player=%d ply=%d depth=%d v=%f min= max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, max, a.Basic())
 		}
@@ -707,7 +708,7 @@ func (ai *AI) Minimax(pos Position, last BasicAction) (Action, float64) {
 	return maxact, max
 }
 
-func (ai *AI) minimax(pos, last Position, ply, depth int, min float64) float64 {
+func (ai *AI) minimax(pos, last Position, ply, depth int, min, max float64) float64 {
 	ai.visited++
 	if pos.over() {
 		ai.evaluated++
@@ -717,7 +718,7 @@ func (ai *AI) minimax(pos, last Position, ply, depth int, min float64) float64 {
 		ai.evaluated++
 		return pos.score()
 	}
-	max := -5.0
+
 	// basic actions
 	acts := pos.BasicActions()
 	shuffle(acts, ai.r)
@@ -736,7 +737,7 @@ func (ai *AI) minimax(pos, last Position, ply, depth int, min float64) float64 {
 		}
 		//tmp.catastrophes()
 		tmp.endturn()
-		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max)
+		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max, -min)
 		if ply <= ai.trace {
 			log.Printf("%*s player=%d ply=%d depth=%d v=%f min=%f max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, min, max, a)
 		}
@@ -747,6 +748,7 @@ func (ai *AI) minimax(pos, last Position, ply, depth int, min float64) float64 {
 			return max
 		}
 	}
+
 	// sacrifice actions
 	sacts := pos.SacrificeActions()
 	//sshuffle(sacts, ai.r)
@@ -756,7 +758,7 @@ func (ai *AI) minimax(pos, last Position, ply, depth int, min float64) float64 {
 			tmp = tmp.do(sa.actions[i])
 		}
 		tmp.endturn()
-		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max)
+		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max, -min)
 		if ply <= ai.trace {
 			log.Printf("%*s player=%d ply=%d depth=%d v=%f min=%f max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, min, max, sa.Basic())
 		}
