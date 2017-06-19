@@ -13,7 +13,7 @@ func main() {
 	g := newGame()
 	ai := homeworlds.NewAI()
 	turn := 1
-	var last homeworlds.Action
+	var last homeworlds.SacrificeAction
 	for !g.IsOver() {
 		fmt.Println("\nTurn number", turn)
 		homeworlds.Print(os.Stdout, g)
@@ -21,16 +21,9 @@ func main() {
 		//n := rand.Intn(len(actions))
 		//a := actions[n]
 		pos := homeworlds.PositionFromGame(g)
-		a, v := ai.Minimax(pos, last)
-		fmt.Println("Action:", a, "Score:", v)
-		m := starMap(g)
-		err := do(g, m, a)
-		if err != nil {
-			fmt.Println(err)
-			break
-		}
-		catastrophe(g)
-		g.EndTurn()
+		a, v := ai.Minimax(pos, last.Basic())
+		fmt.Println("Action:", a.Basic(), "Score:", v)
+		do(g, a)
 		last = a
 		turn++
 	}
@@ -89,7 +82,29 @@ func newGame() *homeworlds.Game {
 	return game
 }
 
-func do(g *homeworlds.Game, stars []*homeworlds.Star, a homeworlds.Action) error {
+func do(g *homeworlds.Game, a homeworlds.SacrificeAction) error {
+	err := doBasic(g, a.Basic())
+	if err != nil {
+		return err
+	}
+	catastrophe(g)
+
+	if a.Type() == homeworlds.Sacrifice {
+		for i := 0; i < a.N(); i++ {
+			err := doBasic(g, a.Action(i))
+			if err != nil {
+				return err
+			}
+			catastrophe(g)
+		}
+	}
+
+	g.EndTurn()
+	return nil
+}
+
+func doBasic(g *homeworlds.Game, a homeworlds.BasicAction) error {
+	stars := starMap(g)
 	if a.System() >= len(stars) {
 		return fmt.Errorf("no such system %d", a.System())
 	}
@@ -117,6 +132,8 @@ func do(g *homeworlds.Game, stars []*homeworlds.Star, a homeworlds.Action) error
 		name := fmt.Sprint(systemid)
 		systemid++
 		return g.Discover(a.Ship(), star, a.NewShip(), name)
+	case homeworlds.Sacrifice:
+		return g.Sacrifice(a.Ship(), star)
 	}
 	return nil
 }

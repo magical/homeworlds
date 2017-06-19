@@ -73,7 +73,7 @@ func (s *Dwarf) OtherShips(pl Player) Bank {
 
 // Action represents a basic action in homeworlds.
 // The zero action is a valid action (Pass).
-type Action struct {
+type BasicAction struct {
 	typ    uint8
 	system uint8
 	ship   uint8
@@ -93,12 +93,15 @@ const (
 	Sacrifice
 )
 
-func (a Action) Type() ActionType { return ActionType(a.typ) }
-func (a Action) System() int      { return int(a.system) }
-func (a Action) Ship() Piece      { return Piece(a.ship) }
-func (a Action) NewShip() Piece   { return Piece(a.arg) }
-func (a Action) NewSystem() Piece { return Piece(a.arg) }
-func (a Action) ToSystem() int    { return int(a.arg) }
+func (b BasicAction) Type() ActionType { return ActionType(b.typ) }
+func (b BasicAction) System() int      { return int(b.system) }
+func (b BasicAction) Ship() Piece      { return Piece(b.ship) }
+func (b BasicAction) NewShip() Piece   { return Piece(b.arg) }
+func (b BasicAction) NewSystem() Piece { return Piece(b.arg) }
+func (b BasicAction) ToSystem() int    { return int(b.arg) }
+func (b BasicAction) Action() SacrificeAction {
+	return SacrificeAction{typ: b.typ, ship: b.ship, system: b.system, arg: b.arg}
+}
 
 func (t ActionType) String() string {
 	return map[ActionType]string{
@@ -113,37 +116,38 @@ func (t ActionType) String() string {
 	}[t]
 }
 
-func (a Action) String() string {
-	var arg interface{} = a.arg
-	switch a.Type() {
+func (b BasicAction) String() string {
+	var arg interface{} = b.arg
+	switch b.Type() {
 	case Discover:
-		arg = a.NewSystem()
+		arg = b.NewSystem()
 	case Move:
-		arg = a.ToSystem()
+		arg = b.ToSystem()
 	case Trade:
-		arg = a.NewShip()
+		arg = b.NewShip()
 	case Build, Attack:
-		if a.arg == 0 {
+		if b.arg == 0 {
 			arg = ""
 		}
 	}
-	return fmt.Sprintf("%s %d %s %v", a.Type(), a.System(), a.Ship(), arg)
+	s := fmt.Sprintf("%s %d %s %v", b.Type(), b.System(), b.Ship(), arg)
+	return strings.TrimRight(s, " ")
 }
 
-func mkaction(typ ActionType, ship Piece, system int, arg Piece) Action {
-	return Action{typ: uint8(typ), system: uint8(system), ship: uint8(ship), arg: uint8(arg)}
+func mkbasic(typ ActionType, ship Piece, system int, arg Piece) BasicAction {
+	return BasicAction{typ: uint8(typ), system: uint8(system), ship: uint8(ship), arg: uint8(arg)}
 }
-func mkmove(ship Piece, system, tosystem int) Action {
-	return Action{typ: uint8(Move), system: uint8(system), ship: uint8(ship), arg: uint8(tosystem)}
+func mkmove(ship Piece, system, tosystem int) BasicAction {
+	return BasicAction{typ: uint8(Move), system: uint8(system), ship: uint8(ship), arg: uint8(tosystem)}
 }
 
-func (g *Game) BasicActions() []Action {
+func (g *Game) BasicActions() []BasicAction {
 	return PositionFromGame(g).BasicActions()
 }
 
-func (pos Position) BasicActions() []Action {
-	var actions []Action
-	actions = append(actions, Action{typ: uint8(Pass)})
+func (pos Position) BasicActions() []BasicAction {
+	var actions []BasicAction
+	actions = append(actions, BasicAction{typ: uint8(Pass)})
 
 	for id, s := range pos.stars {
 		ships := s.Ships(pos.CurrentPlayer())
@@ -154,7 +158,7 @@ func (pos Position) BasicActions() []Action {
 			for c := Color(0); c < Color(4); c++ {
 				if ships.HasColor(c) && pos.bank.HasColor(c) {
 					q := piece(pos.bank.SmallestOfColor(c), c)
-					actions = append(actions, mkaction(Build, q, id, 0))
+					actions = append(actions, mkbasic(Build, q, id, 0))
 				}
 			}
 		}
@@ -166,7 +170,7 @@ func (pos Position) BasicActions() []Action {
 					for c := Color(0); c < Color(4); c++ {
 						q := piece(p.Size(), c)
 						if c != p.Color() && pos.bank.Has(q) {
-							actions = append(actions, mkaction(Trade, p, id, q))
+							actions = append(actions, mkbasic(Trade, p, id, q))
 						}
 					}
 				}
@@ -180,7 +184,7 @@ func (pos Position) BasicActions() []Action {
 				if it.Count() > 0 {
 					q := it.Piece()
 					if q.Size() <= size {
-						actions = append(actions, mkaction(Attack, q, id, 0))
+						actions = append(actions, mkbasic(Attack, q, id, 0))
 					}
 				}
 			}
@@ -203,7 +207,7 @@ func (pos Position) BasicActions() []Action {
 					if s.WouldConnect(q) {
 						for it := ships.Iter(); !it.Done(); it.Next() {
 							if p := it.Piece(); it.Count() > 0 {
-								actions = append(actions, mkaction(Discover, p, id, q))
+								actions = append(actions, mkbasic(Discover, p, id, q))
 							}
 						}
 					}
@@ -252,10 +256,20 @@ func (b Bank) sizes() uint {
 }
 
 type SacrificeAction struct {
-	Ship    Piece
-	System  uint8
-	Num     uint8
-	Actions [3]Action
+	typ     uint8
+	ship    uint8
+	system  uint8
+	arg     uint8
+	actions [3]BasicAction
+}
+
+func (sa SacrificeAction) Type() ActionType { return ActionType(sa.typ) }
+func (sa SacrificeAction) Ship() Piece      { return Piece(sa.ship) }
+func (sa SacrificeAction) System() int      { return int(sa.system) }
+func (sa SacrificeAction) N() int           { return int(sa.arg) }
+
+func mksacrifice(ship Piece, system int) SacrificeAction {
+	return SacrificeAction{typ: uint8(Sacrifice), ship: uint8(ship), system: uint8(system)}
 }
 
 func (g *Game) SacrificeActions() []SacrificeAction {
@@ -270,7 +284,13 @@ func (pos Position) SacrificeActions() []SacrificeAction {
 		for it := ships.Iter(); !it.Done(); it.Next() {
 			if it.Count() > 0 {
 				n := int(it.Piece().Size())
-				a := SacrificeAction{Ship: it.Piece(), System: uint8(id)}
+				if it.Piece() == Y3 {
+					// XXX large yellows can result
+					// in millions of potential actions
+					// which is more than we can handle
+					n = 2
+				}
+				a := mksacrifice(it.Piece(), id)
 				tmp := pos.sacrifice(it.Piece(), id)
 				actions = sacrifice(&tmp, actions, a, n)
 			}
@@ -281,9 +301,10 @@ func (pos Position) SacrificeActions() []SacrificeAction {
 
 func sacrifice(pos *Position, actions []SacrificeAction, sa SacrificeAction, n int) []SacrificeAction {
 	//if !pos.sanityCheck() {
+	//	fmt.Printf("last action: %v\n", sa)
 	//	return actions
 	//}
-	switch sa.Ship.Color() {
+	switch sa.Ship().Color() {
 	case Red:
 		for id, s := range pos.stars {
 			ships := s.Ships(pos.CurrentPlayer())
@@ -292,38 +313,8 @@ func sacrifice(pos *Position, actions []SacrificeAction, sa SacrificeAction, n i
 				size := ships.Largest()
 				for it := enemy.Iter(); !it.Done(); it.Next() {
 					if it.Count() > 0 && it.Piece().Size() <= size {
-						a := mkaction(Attack, it.Piece(), id, 0)
-						actions = appendSacrifice(actions, pos, sa, a, n)
-					}
-				}
-			}
-		}
-
-	case Yellow:
-		for id, s := range pos.stars {
-			ships := s.Ships(pos.CurrentPlayer())
-			if !ships.IsEmpty() {
-				for rid, r := range pos.stars {
-					if s.Connects(&r) {
-						for it := ships.Iter(); !it.Done(); it.Next() {
-							if it.Count() > 0 {
-								a := mkmove(it.Piece(), id, rid)
-								actions = appendSacrifice(actions, pos, sa, a, n)
-							}
-						}
-					}
-				}
-
-				for it := pos.bank.Iter(); !it.Done(); it.Next() {
-					q := it.Piece()
-					if it.Count() > 0 && s.WouldConnect(q) {
-						for it := ships.Iter(); !it.Done(); it.Next() {
-							p := it.Piece()
-							if it.Count() > 0 {
-								a := mkaction(Discover, p, id, q)
-								actions = appendSacrifice(actions, pos, sa, a, n)
-							}
-						}
+						b := mkbasic(Attack, it.Piece(), id, 0)
+						actions = appendSacrifice(actions, pos, sa, b, n)
 					}
 				}
 			}
@@ -340,55 +331,104 @@ func sacrifice(pos *Position, actions []SacrificeAction, sa SacrificeAction, n i
 							log.Println(q, ships, pos.bank)
 							panic("oops")
 						}
-						a := mkaction(Build, q, id, 0)
-						actions = appendSacrifice(actions, pos, sa, a, n)
+						b := mkbasic(Build, q, id, 0)
+						actions = appendSacrifice(actions, pos, sa, b, n)
+					}
+				}
+			}
+		}
+
+	case Blue:
+		for id, s := range pos.stars {
+			ships := s.Ships(pos.CurrentPlayer())
+			for it := ships.Iter(); !it.Done(); it.Next() {
+				if it.Count() > 0 {
+					p := it.Piece()
+					for c := Color(0); c < Color(4); c++ {
+						q := piece(p.Size(), c)
+						if c != p.Color() && pos.bank.Has(q) {
+							b := mkbasic(Trade, p, id, q)
+							actions = appendSacrifice(actions, pos, sa, b, n)
+						}
+					}
+				}
+			}
+		}
+
+	case Yellow:
+		for id, s := range pos.stars {
+			ships := s.Ships(pos.CurrentPlayer())
+			if !ships.IsEmpty() {
+				for rid, r := range pos.stars {
+					if s.Connects(&r) {
+						for it := ships.Iter(); !it.Done(); it.Next() {
+							if it.Count() > 0 {
+								b := mkmove(it.Piece(), id, rid)
+								actions = appendSacrifice(actions, pos, sa, b, n)
+							}
+						}
+					}
+				}
+
+				for it := pos.bank.Iter(); !it.Done(); it.Next() {
+					q := it.Piece()
+					if it.Count() > 0 && s.WouldConnect(q) {
+						for it := ships.Iter(); !it.Done(); it.Next() {
+							p := it.Piece()
+							if it.Count() > 0 {
+								b := mkbasic(Discover, p, id, q)
+								actions = appendSacrifice(actions, pos, sa, b, n)
+							}
+						}
 					}
 				}
 			}
 		}
 	}
-
 	return actions
 }
 
-func appendSacrifice(actions []SacrificeAction, pos *Position, sa SacrificeAction, a Action, n int) []SacrificeAction {
-	sa = sa.append(a)
+func appendSacrifice(actions []SacrificeAction, pos *Position, sa SacrificeAction, b BasicAction, n int) []SacrificeAction {
+	sa = sa.append(b)
 	actions = append(actions, sa)
 	if n > 1 {
-		tmp, err := pos.do(a)
-		if err != nil {
-			panic(err)
-		}
+		tmp := pos.do(b)
 		actions = sacrifice(&tmp, actions, sa, n-1)
 	}
 	return actions
 }
 
-func (sa SacrificeAction) append(a Action) SacrificeAction {
-	sa.Actions[sa.Num] = a
-	sa.Num++
+func (sa SacrificeAction) append(b BasicAction) SacrificeAction {
+	sa.actions[sa.arg] = b
+	sa.arg++
 	return sa
 }
 
-func (pos Position) do(a Action) (Position, error) {
-	switch a.Type() {
+func (pos Position) do(b BasicAction) Position {
+	switch b.Type() {
 	case Pass:
-		return pos, nil
+		return pos
 	case Build:
-		return pos.build(a.Ship(), a.System()), nil
+		return pos.build(b.Ship(), b.System())
 	case Trade:
-		return pos.trade(a.Ship(), a.NewShip(), a.System()), nil
+		return pos.trade(b.Ship(), b.NewShip(), b.System())
 	case Move:
-		if a.ToSystem() >= len(pos.stars) {
-			return pos, fmt.Errorf("no such system %s", a.ToSystem())
+		if b.System() >= len(pos.stars) {
+			log.Println(pos)
+			panic(fmt.Sprintf("no such system: %d", b.System()))
 		}
-		return pos.move(a.Ship(), a.System(), a.ToSystem()), nil
+		if b.ToSystem() >= len(pos.stars) {
+			panic(fmt.Sprintf("no such system: %d", b.ToSystem()))
+		}
+		return pos.move(b.Ship(), b.System(), b.ToSystem())
 	case Attack:
-		return pos.attack(a.Ship(), a.System()), nil
+		return pos.attack(b.Ship(), b.System())
 	case Discover:
-		return pos.discover(a.Ship(), a.System(), a.NewSystem()), nil
+		return pos.discover(b.Ship(), b.System(), b.NewSystem())
+	case Sacrifice:
+		return pos.sacrifice(b.Ship(), b.System())
 	}
-	return pos, fmt.Errorf("unknown action %s", a.Type())
+	panic(fmt.Sprintf("unknown action: %s", b.Type()))
 }
 
 func (pos Position) build(p Piece, s int) Position {
@@ -441,8 +481,8 @@ func (pos Position) discover(p Piece, s int, q Piece) Position {
 	oldstars := pos.stars
 	pos.stars = make([]Dwarf, len(pos.stars)+1)
 	copy(pos.stars, oldstars)
-	pos.stars[r].pieces.Put(q)
 	pos.bank.Take(q)
+	pos.stars[r].pieces.Put(q)
 	pl := pos.player & 1
 	pos.stars[s].ships[pl].Take(p)
 	pos.stars[r].ships[pl].Put(p)
@@ -470,28 +510,30 @@ func (pos *Position) gc(id int, catastrophe bool) {
 			// delete affected star pieces
 			pos.bank.bits += star.pieces.bits & mask
 			star.pieces.bits &^= mask
+			if star.pieces.IsEmpty() {
+				pos.bank.add(star.ships[North])
+				pos.bank.add(star.ships[South])
+				star.ships[0].bits = 0
+				star.ships[1].bits = 0
+				goto delete
+			}
 			// delete affected ships
 			pos.bank.bits += star.ships[0].bits & mask
 			pos.bank.bits += star.ships[1].bits & mask
 			star.ships[0].bits &^= mask
 			star.ships[1].bits &^= mask
-			if star.pieces.IsEmpty() {
-				pos.bank.add(star.ships[North])
-				pos.bank.add(star.ships[South])
-				goto delete
-			}
 		}
 	}
 
 	// delete if empty
 	if star.ships[North].IsEmpty() && star.ships[South].IsEmpty() {
-		pos.bank.add(star.pieces)
 		goto delete
 	}
 	return
 
 delete:
 	if id >= 2 {
+		pos.bank.add(star.pieces)
 		pos.stars = append(pos.stars[:id], pos.stars[id+1:]...)
 	}
 }
@@ -502,9 +544,11 @@ func (pos *Position) gcmove(s, r int) {
 	if s < r {
 		pos.gc(r, true)
 		pos.gc(s, false)
-	} else {
+	} else if s > r {
 		pos.gc(s, false)
 		pos.gc(r, true)
+	} else {
+		panic("s == r")
 	}
 }
 
@@ -579,7 +623,8 @@ func (pos Position) String() string {
 type AI struct {
 	r     *rand.Rand
 	depth int
-	trace bool
+	trace int  // trace up to depth
+	debug bool // enable sanity checks
 
 	// stats
 	evaluated int64
@@ -589,35 +634,59 @@ type AI struct {
 func NewAI() *AI {
 	return &AI{
 		r:     rand.New(rand.NewSource(1)),
-		depth: 5,
-		trace: false,
+		depth: 3,
+		trace: 0,
 	}
 }
 
-func (ai *AI) Minimax(pos Position, last Action) (Action, float64) {
-	acts := pos.BasicActions()
-	shuffle(acts, ai.r)
-	var maxact Action
-	max := -5.0
-	depth := ai.depth
+func (ai *AI) Minimax(pos Position, last BasicAction) (SacrificeAction, float64) {
 	t := time.Now()
 	ai.visited = 0
 	ai.evaluated = 0
+
+	var maxact SacrificeAction
+	max := -5.0
+	depth := ai.depth
+	ply := 1
+
+	acts := pos.BasicActions()
+	shuffle(acts, ai.r)
+	log.Printf("%d basic actions to examine", len(acts))
 	for _, a := range acts {
-		tmp, err := pos.do(a)
-		if err != nil {
-			panic(err)
-		}
+		tmp := pos.do(a)
 		if a.Type() == Attack && a == last {
 			fmt.Println("Action returns to an earlier state:", a)
 			continue
 		}
 		//tmp.catastrophes()
-		tmp = tmp.endturn()
-		v := -ai.minimax(tmp, pos, depth-1, -max)
+		if ai.debug && !tmp.sanityCheck() {
+			fmt.Println("last action:", a)
+			continue
+		}
+		tmp.endturn()
+		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max)
 		//fmt.Printf("%d %c %f\n", depth, "+-"[pos.player], v)
-		if ai.trace {
-			log.Printf("%*s player=%d depth=%d v=%f min= max=%f move=%s", ai.depth-depth, "", pos.CurrentPlayer(), depth, v, max, a)
+		if ply <= ai.trace {
+			log.Printf("%*s player=%d ply=%d depth=%d v=%f min= max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, max, a)
+		}
+		if v > max {
+			max = v
+			maxact = a.Action()
+		}
+	}
+
+	sacts := pos.SacrificeActions()
+	sshuffle(sacts, ai.r)
+	log.Printf("%d sacrifice actions to examine", len(sacts))
+	for _, a := range sacts {
+		tmp := pos.do(a.Basic())
+		for i := 0; i < a.N(); i++ {
+			tmp = tmp.do(a.actions[i])
+		}
+		tmp.endturn()
+		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max)
+		if ply <= ai.trace {
+			log.Printf("%*s player=%d ply=%d depth=%d v=%f min= max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, max, a.Basic())
 		}
 		if v > max {
 			max = v
@@ -634,7 +703,7 @@ func (ai *AI) Minimax(pos Position, last Action) (Action, float64) {
 	return maxact, max
 }
 
-func (ai *AI) minimax(pos, last Position, depth int, min float64) float64 {
+func (ai *AI) minimax(pos, last Position, ply, depth int, min float64) float64 {
 	ai.visited++
 	if pos.over() {
 		ai.evaluated++
@@ -645,31 +714,53 @@ func (ai *AI) minimax(pos, last Position, depth int, min float64) float64 {
 		return pos.score()
 	}
 	max := -5.0
+	// basic actions
 	acts := pos.BasicActions()
 	shuffle(acts, ai.r)
 	for _, a := range acts {
-		tmp, err := pos.do(a)
-		if err != nil {
-			panic(err)
-		}
+		tmp := pos.do(a)
 		if a.Type() == Attack && tmp.Equal(last) {
-			if depth == 4 {
+			if ply == 2 {
 				fmt.Println("action returns to an earlier state:", a)
 			}
 			continue
 		}
-		//tmp.catastrophes()
-		tmp = tmp.endturn()
-		v := -ai.minimax(tmp, pos, depth-1, -max)
-		if ai.trace {
-			log.Printf("%*s player=%d depth=%d v=%f min=%f max=%f move=%s", ai.depth-depth, "", pos.CurrentPlayer(), depth, v, min, max, a)
+		if ai.debug && !tmp.sanityCheck() {
+			fmt.Println("pos:", tmp)
+			fmt.Println("last action:", a)
+			continue
 		}
-		//fmt.Printf("%d %f\n", depth, v)
+		//tmp.catastrophes()
+		tmp.endturn()
+		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max)
+		if ply <= ai.trace {
+			log.Printf("%*s player=%d ply=%d depth=%d v=%f min=%f max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, min, max, a)
+		}
 		if v > max {
 			max = v
 		}
 		if max >= min {
-			break
+			return max
+		}
+	}
+	// sacrifice actions
+	sacts := pos.SacrificeActions()
+	//sshuffle(sacts, ai.r)
+	for _, sa := range sacts {
+		tmp := pos.do(sa.Basic())
+		for i := 0; i < sa.N(); i++ {
+			tmp = tmp.do(sa.actions[i])
+		}
+		tmp.endturn()
+		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max)
+		if ply <= ai.trace {
+			log.Printf("%*s player=%d ply=%d depth=%d v=%f min=%f max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, min, max, sa.Basic())
+		}
+		if v > max {
+			max = v
+		}
+		if max >= min {
+			return max
 		}
 	}
 	return max
@@ -679,9 +770,16 @@ func (pos Position) over() bool {
 	return pos.stars[North].ships[North].IsEmpty() || pos.stars[South].ships[South].IsEmpty()
 }
 
-func (pos Position) endturn() Position {
+func (pos *Position) endturn() {
 	pos.player ^= 1
-	return pos
+}
+
+func (sa SacrificeAction) Basic() BasicAction {
+	return BasicAction{typ: sa.typ, ship: sa.ship, system: sa.system, arg: sa.arg}
+}
+
+func (sa SacrificeAction) Action(i int) BasicAction {
+	return sa.actions[i]
 }
 
 var points = []int{0, 1, 3, 9}
@@ -759,12 +857,18 @@ func (pos Position) score() float64 {
 	return score
 }
 
-func shuffle(acts []Action, r *rand.Rand) {
+func sshuffle(acts []SacrificeAction, r *rand.Rand) {
 	for i := 0; 1 < len(acts)-i; i++ {
 		j := i + r.Intn(len(acts)-i)
 		acts[i], acts[j] = acts[j], acts[i]
 	}
-	//fmt.Println(acts)
+}
+
+func shuffle(acts []BasicAction, r *rand.Rand) {
+	for i := 0; 1 < len(acts)-i; i++ {
+		j := i + r.Intn(len(acts)-i)
+		acts[i], acts[j] = acts[j], acts[i]
+	}
 }
 
 func (pos *Position) catastrophes() {
@@ -827,4 +931,15 @@ func (pos Position) Equal(other Position) bool {
 		}
 	}
 	return true
+}
+
+func (sa SacrificeAction) String() string {
+	s := ""
+	s += sa.Basic().String()
+	if sa.Type() == Sacrifice {
+		for i := 0; i < sa.N(); i++ {
+			s += ", " + sa.Action(i).String()
+		}
+	}
+	return s
 }

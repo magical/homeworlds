@@ -17,8 +17,10 @@ South's fleet:
   At their homeworld: a large green ship.
 
 It is North's turn.
-2017/06/17 22:21:49 visited=2006 (1401.3/ms) evaluated=1687 (1178.5/ms) in 1.431505ms
-Action: Build 0 B1  Score: -0.015873015873015872
+2017/06/18 19:43:01 9 basic actions to examine
+2017/06/18 19:43:01 0 sacrifice actions to examine
+2017/06/18 19:43:01 visited=194 (545.9/ms) evaluated=176 (495.3/ms) in 355.362µs
+Action: Build 0 B1 Score: 0.0992063492063492
 
 Turn number 2
 The Bank:
@@ -38,8 +40,10 @@ South's fleet:
   At their homeworld: a large green ship.
 
 It is South's turn.
-2017/06/17 22:21:49 visited=4407 (933.3/ms) evaluated=3459 (732.6/ms) in 4.721815ms
-Action: Build 1 G1  Score: -0.01984126984126984
+2017/06/18 19:43:01 9 basic actions to examine
+2017/06/18 19:43:01 0 sacrifice actions to examine
+2017/06/18 19:43:01 visited=215 (716.1/ms) evaluated=148 (492.9/ms) in 300.256µs
+Action: Build 1 G1 Score: -0.01984126984126984
 
 Turn number 3
 The Bank:
@@ -59,14 +63,16 @@ South's fleet:
   At their homeworld: a large green and a small green ship.
 
 It is North's turn.
-2017/06/17 22:21:49 visited=18586 (1159.8/ms) evaluated=16047 (1001.4/ms) in 16.02453ms
-Action: Trade 0 B3 G3 Score: 0.0992063492063492
+2017/06/18 19:43:01 16 basic actions to examine
+2017/06/18 19:43:01 42 sacrifice actions to examine
+2017/06/18 19:43:01 visited=1827 (978.1/ms) evaluated=1678 (898.3/ms) in 1.867956ms
+Action: Build 0 B1 Score: -0.015873015873015872
 
 Turn number 4
 The Bank:
   Red: 3 large, 3 medium, 3 small.
-  Green: 3 medium, 2 small.
-  Blue: 3 large, 2 medium, 2 small.
+  Green: 1 large, 3 medium, 2 small.
+  Blue: 2 large, 2 medium, 1 small.
   Yellow: 2 large, 3 medium, 2 small.
 
 Systems:
@@ -74,168 +80,184 @@ Systems:
   South's homeworld, a Y3/B2 star.
 
 North's fleet:
-  At their homeworld: a large green and a small blue ship.
+  At their homeworld: a large blue ship and two small blue ships.
 
 South's fleet:
   At their homeworld: a large green and a small green ship.
 
 It is South's turn.
-2017/06/17 22:21:49 visited=29042 (1268.1/ms) evaluated=25045 (1093.6/ms) in 22.901983ms
-Action: Trade 1 G3 Y3 Score: -0.01984126984126984
+2017/06/18 19:43:01 16 basic actions to examine
+2017/06/18 19:43:01 4 sacrifice actions to examine
+2017/06/18 19:43:01 visited=1538 (857.9/ms) evaluated=1223 (682.2/ms) in 1.792805ms
+Action: Trade 1 G1 B1 Score: -0.01984126984126984
 
 Turn number 5
 The Bank:
   Red: 3 large, 3 medium, 3 small.
-  Green: 1 large, 3 medium, 2 small.
-  Blue: 3 large, 2 medium, 2 small.
-  Yellow: 1 large, 3 medium, 2 small.
+  Green: 1 large, 3 medium, 3 small.
+  Blue: 2 large, 2 medium.
+  Yellow: 2 large, 3 medium, 2 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
 
 North's fleet:
-  At their homeworld: a large green and a small blue ship.
+  At their homeworld: a large blue ship and two small blue ships.
 
 South's fleet:
-  At their homeworld: a large yellow and a small green ship.
+  At their homeworld: a large green and a small blue ship.
 
 It is North's turn.
-2017/06/17 22:21:49 visited=36794 (1289.0/ms) evaluated=31746 (1112.2/ms) in 28.544401ms
-Action: Build 0 B1  Score: -0.015873015873015872
+2017/06/18 19:43:01 16 basic actions to examine
+2017/06/18 19:43:01 117 sacrifice actions to examine
+2017/06/18 19:43:01 visited=6593 (785.5/ms) evaluated=6266 (746.6/ms) in 8.393126ms
+Action: Trade 0 B1 R1 Score: 0.0992063492063492
 
 Turn number 6
 The Bank:
-  Red: 3 large, 3 medium, 3 small.
-  Green: 1 large, 3 medium, 2 small.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium, 2 small.
+  Red: 3 large, 3 medium, 2 small.
+  Green: 1 large, 3 medium, 3 small.
+  Blue: 2 large, 2 medium, 1 small.
+  Yellow: 2 large, 3 medium, 2 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
 
 North's fleet:
-  At their homeworld: a large green ship and two small blue ships.
+  At their homeworld: a large blue, a small red, and a small blue ship.
 
 South's fleet:
-  At their homeworld: a large yellow and a small green ship.
+  At their homeworld: a large green and a small blue ship.
 
 It is South's turn.
-2017/06/17 22:21:49 visited=51042 (1237.3/ms) evaluated=44120 (1069.5/ms) in 41.254315ms
-Action: Build 1 G1  Score: -0.01984126984126984
+2017/06/18 19:43:01 17 basic actions to examine
+2017/06/18 19:43:01 5 sacrifice actions to examine
+2017/06/18 19:43:01 visited=1927 (606.4/ms) evaluated=1434 (451.2/ms) in 3.177935ms
+Action: Build 1 G1 Score: -0.01984126984126984
 
 Turn number 7
 The Bank:
-  Red: 3 large, 3 medium, 3 small.
-  Green: 1 large, 3 medium, 1 small.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium, 2 small.
+  Red: 3 large, 3 medium, 2 small.
+  Green: 1 large, 3 medium, 2 small.
+  Blue: 2 large, 2 medium, 1 small.
+  Yellow: 2 large, 3 medium, 2 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
 
 North's fleet:
-  At their homeworld: a large green ship and two small blue ships.
+  At their homeworld: a large blue, a small red, and a small blue ship.
 
 South's fleet:
-  At their homeworld: a large yellow ship and two small green ships.
+  At their homeworld: a large green, a small green, and a small blue ship.
 
 It is North's turn.
-2017/06/17 22:21:49 visited=44739 (1258.1/ms) evaluated=39856 (1120.8/ms) in 35.560703ms
-Action: Trade 0 B1 Y1 Score: 0.0992063492063492
+2017/06/18 19:43:01 24 basic actions to examine
+2017/06/18 19:43:01 198 sacrifice actions to examine
+2017/06/18 19:43:01 visited=17144 (874.4/ms) evaluated=16517 (842.4/ms) in 19.607567ms
+Action: Trade 0 B3 G3 Score: -0.015873015873015872
 
 Turn number 8
 The Bank:
-  Red: 3 large, 3 medium, 3 small.
-  Green: 1 large, 3 medium, 1 small.
-  Blue: 3 large, 2 medium, 2 small.
-  Yellow: 1 large, 3 medium, 1 small.
+  Red: 3 large, 3 medium, 2 small.
+  Green: 3 medium, 2 small.
+  Blue: 3 large, 2 medium, 1 small.
+  Yellow: 2 large, 3 medium, 2 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
 
 North's fleet:
-  At their homeworld: a large green, a small blue, and a small yellow ship.
+  At their homeworld: a large green, a small red, and a small blue ship.
 
 South's fleet:
-  At their homeworld: a large yellow ship and two small green ships.
+  At their homeworld: a large green, a small green, and a small blue ship.
 
 It is South's turn.
-2017/06/17 22:21:49 visited=78351 (1248.8/ms) evaluated=69640 (1109.9/ms) in 62.742045ms
-Action: Trade 1 G1 B1 Score: -0.01984126984126984
+2017/06/18 19:43:01 24 basic actions to examine
+2017/06/18 19:43:01 21 sacrifice actions to examine
+2017/06/18 19:43:01 visited=4114 (1020.1/ms) evaluated=3752 (930.4/ms) in 4.032815ms
+Action: Trade 1 G1 R1 Score: -0.01984126984126984
 
 Turn number 9
 The Bank:
-  Red: 3 large, 3 medium, 3 small.
-  Green: 1 large, 3 medium, 2 small.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 3 small.
   Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium, 1 small.
+  Yellow: 2 large, 3 medium, 2 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
 
 North's fleet:
-  At their homeworld: a large green, a small blue, and a small yellow ship.
+  At their homeworld: a large green, a small red, and a small blue ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small green, and a small blue ship.
+  At their homeworld: a large green, a small red, and a small blue ship.
 
 It is North's turn.
-2017/06/17 22:21:49 visited=218039 (1250.1/ms) evaluated=196137 (1124.5/ms) in 174.418986ms
-Action: Build 0 G1  Score: -0.015873015873015872
+2017/06/18 19:43:01 25 basic actions to examine
+2017/06/18 19:43:01 20 sacrifice actions to examine
+2017/06/18 19:43:01 visited=3251 (1024.3/ms) evaluated=3024 (952.8/ms) in 3.173954ms
+Action: Build 0 G1 Score: 0.0992063492063492
 
 Turn number 10
 The Bank:
-  Red: 3 large, 3 medium, 3 small.
-  Green: 1 large, 3 medium, 1 small.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 2 small.
   Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium, 1 small.
+  Yellow: 2 large, 3 medium, 2 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
 
 North's fleet:
-  At their homeworld: a large green, a small green, a small blue, and a small yellow ship.
+  At their homeworld: a large green, a small red, a small green, and a small blue ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small green, and a small blue ship.
+  At their homeworld: a large green, a small red, and a small blue ship.
 
 It is South's turn.
-2017/06/17 22:21:50 visited=161542 (1183.0/ms) evaluated=142665 (1044.8/ms) in 136.551434ms
-Action: Build 1 G1  Score: -0.01984126984126984
+2017/06/18 19:43:01 25 basic actions to examine
+2017/06/18 19:43:01 19 sacrifice actions to examine
+2017/06/18 19:43:01 visited=4783 (951.7/ms) evaluated=4282 (852.1/ms) in 5.025497ms
+Action: Build 1 B1 Score: -0.01984126984126984
 
 Turn number 11
 The Bank:
-  Red: 3 large, 3 medium, 3 small.
-  Green: 1 large, 3 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium, 1 small.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 2 small.
+  Blue: 3 large, 2 medium.
+  Yellow: 2 large, 3 medium, 2 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
 
 North's fleet:
-  At their homeworld: a large green, a small green, a small blue, and a small yellow ship.
+  At their homeworld: a large green, a small red, a small green, and a small blue ship.
 
 South's fleet:
-  At their homeworld: a large yellow ship, two small green ships, and a small blue ship.
+  At their homeworld: a large green, a small red ship, and two small blue ships.
 
 It is North's turn.
-2017/06/17 22:21:50 visited=297904 (1273.0/ms) evaluated=273184 (1167.3/ms) in 234.021164ms
-Action: Trade 0 G1 R1 Score: -0.015873015873015872
+2017/06/18 19:43:01 30 basic actions to examine
+2017/06/18 19:43:01 50 sacrifice actions to examine
+2017/06/18 19:43:01 visited=20026 (1070.5/ms) evaluated=19323 (1032.9/ms) in 18.70666ms
+Action: Trade 0 G1 Y1 Score: -0.007936507936507936
 
 Turn number 12
 The Bank:
-  Red: 3 large, 3 medium, 2 small.
-  Green: 1 large, 3 medium, 1 small.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium, 1 small.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 3 small.
+  Blue: 3 large, 2 medium.
+  Yellow: 2 large, 3 medium, 1 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
@@ -245,18 +267,20 @@ North's fleet:
   At their homeworld: a large green, a small red, a small blue, and a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow ship, two small green ships, and a small blue ship.
+  At their homeworld: a large green, a small red ship, and two small blue ships.
 
 It is South's turn.
-2017/06/17 22:21:50 visited=268251 (1227.4/ms) evaluated=241017 (1102.8/ms) in 218.55063ms
-Action: Trade 1 G1 R1 Score: -0.01984126984126984
+2017/06/18 19:43:01 21 basic actions to examine
+2017/06/18 19:43:01 18 sacrifice actions to examine
+2017/06/18 19:43:01 visited=4877 (941.2/ms) evaluated=4300 (829.8/ms) in 5.181736ms
+Action: Trade 1 B1 Y1 Score: -0.01984126984126984
 
 Turn number 13
 The Bank:
   Red: 3 large, 3 medium, 1 small.
-  Green: 1 large, 3 medium, 2 small.
+  Green: 3 medium, 3 small.
   Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium, 1 small.
+  Yellow: 2 large, 3 medium.
 
 Systems:
   North's homeworld, a G3/Y1 star.
@@ -266,1769 +290,482 @@ North's fleet:
   At their homeworld: a large green, a small red, a small blue, and a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, a small green, and a small blue ship.
+  At their homeworld: a large green, a small red, a small blue, and a small yellow ship.
 
 It is North's turn.
-2017/06/17 22:21:50 visited=276654 (1205.5/ms) evaluated=251828 (1097.3/ms) in 229.488065ms
-Action: Discover 0 Y1 R2 Score: 0.003968253968253968
+2017/06/18 19:43:01 31 basic actions to examine
+2017/06/18 19:43:01 58 sacrifice actions to examine
+2017/06/18 19:43:01 visited=19516 (969.5/ms) evaluated=18984 (943.1/ms) in 20.129784ms
+Action: Build 0 Y2 Score: -0.015873015873015872
 
 Turn number 14
 The Bank:
-  Red: 3 large, 2 medium, 1 small.
-  Green: 1 large, 3 medium, 2 small.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 3 small.
   Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium, 1 small.
+  Yellow: 2 large, 2 medium.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  2, a R2 star.
 
 North's fleet:
-  At their homeworld: a large green, a small red, and a small blue ship.
-  At 2: a small yellow ship.
+  At their homeworld: a large green, a medium yellow, a small red, a small blue, and a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, a small green, and a small blue ship.
+  At their homeworld: a large green, a small red, a small blue, and a small yellow ship.
 
 It is South's turn.
-2017/06/17 22:21:51 visited=416068 (1183.1/ms) evaluated=376585 (1070.8/ms) in 351.686246ms
-Action: Discover 1 G1 Y1 Score: 0.003968253968253968
+2017/06/18 19:43:01 27 basic actions to examine
+2017/06/18 19:43:01 57 sacrifice actions to examine
+2017/06/18 19:43:01 visited=16713 (920.9/ms) evaluated=15039 (828.7/ms) in 18.148403ms
+Action: Build 1 Y2 Score: -0.01984126984126984
 
 Turn number 15
 The Bank:
-  Red: 3 large, 2 medium, 1 small.
-  Green: 1 large, 3 medium, 2 small.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 3 small.
   Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
+  Yellow: 2 large, 1 medium.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  2, a R2 star.
-  3, a Y1 star.
 
 North's fleet:
-  At their homeworld: a large green, a small red, and a small blue ship.
-  At 2: a small yellow ship.
+  At their homeworld: a large green, a medium yellow, a small red, a small blue, and a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: a small green ship.
+  At their homeworld: a large green, a medium yellow, a small red, a small blue, and a small yellow ship.
 
 It is North's turn.
-2017/06/17 22:21:51 visited=555611 (1154.3/ms) evaluated=511641 (1063.0/ms) in 481.326353ms
-Action: Discover 2 Y1 R1 Score: 0.01984126984126984
+2017/06/18 19:43:01 38 basic actions to examine
+2017/06/18 19:43:01 426 sacrifice actions to examine
+2017/06/18 19:43:01 visited=285316 (890.9/ms) evaluated=283161 (884.2/ms) in 320.25965ms
+Action: Discover 0 Y1 Y2 Score: 0.007936507936507936
 
 Turn number 16
 The Bank:
-  Red: 3 large, 3 medium.
-  Green: 1 large, 3 medium, 2 small.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 3 small.
   Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
+  Yellow: 2 large.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
+  2, a Y2 star.
 
 North's fleet:
-  At their homeworld: a large green, a small red, and a small blue ship.
-  At 4: a small yellow ship.
+  At their homeworld: a large green, a medium yellow, a small red, and a small blue ship.
+  At 2: a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: a small green ship.
+  At their homeworld: a large green, a medium yellow, a small red, a small blue, and a small yellow ship.
 
 It is South's turn.
-2017/06/17 22:21:51 visited=406683 (1156.1/ms) evaluated=373001 (1060.4/ms) in 351.761886ms
-Action: Build 2 G1  Score: -0
+2017/06/18 19:43:01 33 basic actions to examine
+2017/06/18 19:43:01 297 sacrifice actions to examine
+2017/06/18 19:43:01 visited=108982 (902.7/ms) evaluated=105180 (871.2/ms) in 120.724578ms
+Action: Trade 1 Y2 B2 Score: -0.011904761904761904
 
 Turn number 17
 The Bank:
-  Red: 3 large, 3 medium.
-  Green: 1 large, 3 medium, 1 small.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 3 small.
+  Blue: 3 large, 1 medium, 1 small.
+  Yellow: 2 large, 1 medium.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
+  2, a Y2 star.
 
 North's fleet:
-  At their homeworld: a large green, a small red, and a small blue ship.
-  At 4: a small yellow ship.
+  At their homeworld: a large green, a medium yellow, a small red, and a small blue ship.
+  At 2: a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: two small green ships.
+  At their homeworld: a large green, a medium blue, a small red, a small blue, and a small yellow ship.
 
 It is North's turn.
-2017/06/17 22:21:52 visited=824664 (1152.6/ms) evaluated=762264 (1065.4/ms) in 715.491952ms
-Action: Build 0 R2  Score: 0.007936507936507936
+2017/06/18 19:43:01 42 basic actions to examine
+2017/06/18 19:43:01 642 sacrifice actions to examine
+2017/06/18 19:43:01 visited=260465 (953.4/ms) evaluated=258354 (945.7/ms) in 273.193374ms
+Action: Discover 2 Y1 G1 Score: 0.015873015873015872
 
 Turn number 18
 The Bank:
-  Red: 3 large, 2 medium.
-  Green: 1 large, 3 medium, 1 small.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 2 small.
+  Blue: 3 large, 1 medium, 1 small.
+  Yellow: 2 large, 2 medium.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
+  3, a G1 star.
 
 North's fleet:
-  At their homeworld: a large green, a medium red, a small red, and a small blue ship.
-  At 4: a small yellow ship.
+  At their homeworld: a large green, a medium yellow, a small red, and a small blue ship.
+  At 3: a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: two small green ships.
+  At their homeworld: a large green, a medium blue, a small red, a small blue, and a small yellow ship.
 
 It is South's turn.
-2017/06/17 22:21:53 visited=1001905 (1103.2/ms) evaluated=922735 (1016.1/ms) in 908.142162ms
-Action: Build 2 G1  Score: -0.015873015873015872
+2017/06/18 19:43:01 38 basic actions to examine
+2017/06/18 19:43:01 163 sacrifice actions to examine
+2017/06/18 19:43:02 visited=51227 (909.1/ms) evaluated=49205 (873.2/ms) in 56.35116ms
+Action: Build 1 G1 Score: -0.015873015873015872
 
 Turn number 19
 The Bank:
-  Red: 3 large, 2 medium.
-  Green: 1 large, 3 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large, 1 medium, 1 small.
+  Yellow: 2 large, 2 medium.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
+  3, a G1 star.
 
 North's fleet:
-  At their homeworld: a large green, a medium red, a small red, and a small blue ship.
-  At 4: a small yellow ship.
+  At their homeworld: a large green, a medium yellow, a small red, and a small blue ship.
+  At 3: a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: three small green ships.
+  At their homeworld: a large green, a medium blue, a small red, a small green, a small blue, and a small yellow ship.
 
 It is North's turn.
-2017/06/17 22:21:54 visited=1346064 (1164.7/ms) evaluated=1261284 (1091.4/ms) in 1.155669172s
-Action: Build 0 R2  Score: 0.007936507936507936
+2017/06/18 19:43:02 40 basic actions to examine
+2017/06/18 19:43:02 602 sacrifice actions to examine
+2017/06/18 19:43:02 visited=271763 (941.8/ms) evaluated=269036 (932.3/ms) in 288.570538ms
+Action: Build 0 Y2 Score: 0.023809523809523808
 
 Turn number 20
 The Bank:
-  Red: 3 large, 1 medium.
-  Green: 1 large, 3 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large, 1 medium, 1 small.
+  Yellow: 2 large, 1 medium.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
+  3, a G1 star.
 
 North's fleet:
-  At their homeworld: a large green ship, two medium red ships, a small red, and a small blue ship.
-  At 4: a small yellow ship.
+  At their homeworld: a large green ship, two medium yellow ships, a small red, and a small blue ship.
+  At 3: a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: three small green ships.
+  At their homeworld: a large green, a medium blue, a small red, a small green, a small blue, and a small yellow ship.
 
 It is South's turn.
-2017/06/17 22:21:55 visited=573688 (1088.0/ms) evaluated=528277 (1001.9/ms) in 527.284673ms
-Action: Discover 2 G1 Y2 Score: -0.01984126984126984
+2017/06/18 19:43:02 44 basic actions to examine
+2017/06/18 19:43:02 240 sacrifice actions to examine
+2017/06/18 19:43:02 visited=107527 (890.4/ms) evaluated=103920 (860.5/ms) in 120.762363ms
+Action: Discover 1 B1 B1 Score: -0.01984126984126984
 
 Turn number 21
 The Bank:
-  Red: 3 large, 1 medium.
-  Green: 1 large, 3 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 2 medium.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large, 1 medium.
+  Yellow: 2 large, 1 medium.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  5, a Y2 star.
+  3, a G1 star.
+  4, a B1 star.
 
 North's fleet:
-  At their homeworld: a large green ship, two medium red ships, a small red, and a small blue ship.
-  At 4: a small yellow ship.
+  At their homeworld: a large green ship, two medium yellow ships, a small red, and a small blue ship.
+  At 3: a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: two small green ships.
-  At 5: a small green ship.
+  At their homeworld: a large green, a medium blue, a small red, a small green, and a small yellow ship.
+  At 4: a small blue ship.
 
 It is North's turn.
-2017/06/17 22:21:56 visited=1421454 (1151.5/ms) evaluated=1343864 (1088.7/ms) in 1.234400756s
-Action: Discover 0 R1 R2 Score: 0.027777777777777776
+2017/06/18 19:43:02 39 basic actions to examine
+2017/06/18 19:43:02 812 sacrifice actions to examine
+2017/06/18 19:43:03 visited=1001327 (881.7/ms) evaluated=998325 (879.1/ms) in 1.135614535s
+Action: Build 2 Y2 Score: 0.03968253968253968
 
 Turn number 22
 The Bank:
-  Red: 3 large.
-  Green: 1 large, 3 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 2 medium.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large, 1 medium.
+  Yellow: 2 large.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  5, a Y2 star.
-  6, a R2 star.
+  3, a G1 star.
+  4, a B1 star.
 
 North's fleet:
-  At their homeworld: a large green ship, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a small red ship.
+  At their homeworld: a large green ship, two medium yellow ships, a small red, and a small blue ship.
+  At 3: a medium yellow and a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: two small green ships.
-  At 5: a small green ship.
+  At their homeworld: a large green, a medium blue, a small red, a small green, and a small yellow ship.
+  At 4: a small blue ship.
 
 It is South's turn.
-2017/06/17 22:21:57 visited=1009176 (1077.9/ms) evaluated=946300 (1010.7/ms) in 936.265339ms
-Action: Move 4 G1 0 Score: -0.003968253968253968
+2017/06/18 19:43:03 36 basic actions to examine
+2017/06/18 19:43:03 280 sacrifice actions to examine
+2017/06/18 19:43:03 visited=289211 (862.8/ms) evaluated=282020 (841.4/ms) in 335.197291ms
+Action: Build 1 B2 Score: -0.023809523809523808
 
 Turn number 23
 The Bank:
-  Red: 3 large.
-  Green: 1 large, 3 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large.
+  Yellow: 2 large.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
+  3, a G1 star.
+  4, a B1 star.
 
 North's fleet:
-  At their homeworld: a large green ship, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a small red ship.
+  At their homeworld: a large green ship, two medium yellow ships, a small red, and a small blue ship.
+  At 3: a medium yellow and a small yellow ship.
 
 South's fleet:
-  At North's homeworld: a small green ship.
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: two small green ships.
+  At their homeworld: a large green ship, two medium blue ships, a small red, a small green, and a small yellow ship.
+  At 4: a small blue ship.
 
 It is North's turn.
-2017/06/17 22:21:58 visited=1096510 (1144.8/ms) evaluated=1027857 (1073.1/ms) in 957.81481ms
-Action: Build 0 R3  Score: 0.023809523809523808
+2017/06/18 19:43:03 34 basic actions to examine
+2017/06/18 19:43:04 1410 sacrifice actions to examine
+2017/06/18 19:43:08 visited=3894350 (827.1/ms) evaluated=3882318 (824.6/ms) in 4.708324886s
+Action: Move 2 Y2 1 Score: 0.07539682539682539
 
 Turn number 24
 The Bank:
-  Red: 2 large.
-  Green: 1 large, 3 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large.
+  Yellow: 2 large.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
+  3, a G1 star.
+  4, a B1 star.
 
 North's fleet:
-  At their homeworld: a large red, a large green ship, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a small red ship.
+  At their homeworld: a large green ship, two medium yellow ships, a small red, and a small blue ship.
+  At South's homeworld: a medium yellow ship.
+  At 3: a small yellow ship.
 
 South's fleet:
-  At North's homeworld: a small green ship.
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: two small green ships.
+  At their homeworld: a large green ship, two medium blue ships, a small red, a small green, and a small yellow ship.
+  At 4: a small blue ship.
 
 It is South's turn.
-2017/06/17 22:21:59 visited=1249421 (1053.1/ms) evaluated=1153980 (972.7/ms) in 1.186381155s
-Action: Build 2 G2  Score: -0.027777777777777776
+2017/06/18 19:43:08 37 basic actions to examine
+2017/06/18 19:43:08 291 sacrifice actions to examine
+2017/06/18 19:43:08 visited=253572 (880.0/ms) evaluated=246097 (854.1/ms) in 288.148965ms
+Action: Trade 1 B2 R2 Score: -0.03968253968253968
 
 Turn number 25
 The Bank:
-  Red: 2 large.
-  Green: 1 large, 2 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
+  Red: 3 large, 2 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large, 1 medium.
+  Yellow: 2 large.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
+  3, a G1 star.
+  4, a B1 star.
 
 North's fleet:
-  At their homeworld: a large red, a large green ship, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a small red ship.
+  At their homeworld: a large green ship, two medium yellow ships, a small red, and a small blue ship.
+  At South's homeworld: a medium yellow ship.
+  At 3: a small yellow ship.
 
 South's fleet:
-  At North's homeworld: a small green ship.
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: a medium green ship and two small green ships.
+  At their homeworld: a large green, a medium red, a medium blue, a small red, a small green, and a small yellow ship.
+  At 4: a small blue ship.
 
 It is North's turn.
-2017/06/17 22:22:02 visited=2854518 (1142.6/ms) evaluated=2698906 (1080.3/ms) in 2.498362272s
-Action: Attack 0 G1  Score: 0.03571428571428571
+2017/06/18 19:43:08 41 basic actions to examine
+2017/06/18 19:43:09 1779 sacrifice actions to examine
+2017/06/18 19:43:14 visited=4382342 (850.2/ms) evaluated=4376426 (849.1/ms) in 5.154180886s
+Action: Build 2 Y3 Score: 0.0992063492063492
 
 Turn number 26
 The Bank:
-  Red: 2 large.
-  Green: 1 large, 2 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
+  Red: 3 large, 2 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large, 1 medium.
+  Yellow: 1 large.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
+  3, a G1 star.
+  4, a B1 star.
 
 North's fleet:
-  At their homeworld: a large red, a large green ship, two medium red ships, a small green, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a small red ship.
+  At their homeworld: a large green ship, two medium yellow ships, a small red, and a small blue ship.
+  At South's homeworld: a medium yellow ship.
+  At 3: a large yellow and a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: a medium green ship and two small green ships.
+  At their homeworld: a large green, a medium red, a medium blue, a small red, a small green, and a small yellow ship.
+  At 4: a small blue ship.
 
 It is South's turn.
-2017/06/17 22:22:03 visited=1063183 (1075.0/ms) evaluated=990447 (1001.5/ms) in 988.993485ms
-Action: Discover 2 G2 Y2 Score: -0.051587301587301584
+2017/06/18 19:43:14 43 basic actions to examine
+2017/06/18 19:43:14 316 sacrifice actions to examine
+2017/06/18 19:43:14 visited=246841 (831.2/ms) evaluated=236799 (797.4/ms) in 296.96122ms
+Action: Attack 1 Y2 Score: -0.051587301587301584
 
 Turn number 27
 The Bank:
-  Red: 2 large.
-  Green: 1 large, 2 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 2 medium.
+  Red: 3 large, 2 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large, 1 medium.
+  Yellow: 1 large.
 
 Systems:
   North's homeworld, a G3/Y1 star.
   South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-  7, a Y2 star.
+  3, a G1 star.
+  4, a B1 star.
 
 North's fleet:
-  At their homeworld: a large red, a large green ship, two medium red ships, a small green, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a small red ship.
+  At their homeworld: a large green ship, two medium yellow ships, a small red, and a small blue ship.
+  At 3: a large yellow and a small yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: two small green ships.
-  At 7: a medium green ship.
+  At their homeworld: a large green, a medium red, a medium blue, a medium yellow, a small red, a small green, and a small yellow ship.
+  At 4: a small blue ship.
 
 It is North's turn.
-2017/06/17 22:22:04 visited=1925925 (1134.7/ms) evaluated=1833041 (1080.0/ms) in 1.697276438s
-Action: Move 0 G1 4 Score: 0.05555555555555555
+2017/06/18 19:43:14 41 basic actions to examine
+2017/06/18 19:43:14 1753 sacrifice actions to examine
+2017/06/18 19:43:24 visited=8553774 (823.1/ms) evaluated=8542432 (822.0/ms) in 10.392545021s
+Action: Move 2 Y1 1 Score: 0.051587301587301584
 
 Turn number 28
 The Bank:
-  Red: 2 large.
-  Green: 1 large, 2 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 2 medium.
+  Red: 3 large, 2 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large, 1 medium.
+  Yellow: 2 large, 1 medium, 2 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-  7, a Y2 star.
+  South's homeworld, a B2 star.
+  3, a G1 star.
+  4, a B1 star.
 
 North's fleet:
-  At their homeworld: a large red, a large green ship, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a small red and a small green ship.
+  At their homeworld: a large green ship, two medium yellow ships, a small red, and a small blue ship.
+  At 3: a large yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: two small green ships.
-  At 7: a medium green ship.
+  At their homeworld: a large green, a medium red, a medium blue, a small red, and a small green ship.
+  At 4: a small blue ship.
 
 It is South's turn.
-2017/06/17 22:22:05 visited=1238033 (1090.2/ms) evaluated=1165202 (1026.0/ms) in 1.135628592s
-Action: Move 2 G1 1 Score: -0.047619047619047616
+2017/06/18 19:43:24 20 basic actions to examine
+2017/06/18 19:43:24 278 sacrifice actions to examine
+2017/06/18 19:43:25 visited=315578 (885.0/ms) evaluated=309675 (868.5/ms) in 356.573707ms
+Action: Trade 1 R2 Y2 Score: -0.027777777777777776
 
 Turn number 29
 The Bank:
-  Red: 2 large.
-  Green: 1 large, 2 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 2 medium.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large, 1 medium.
+  Yellow: 2 large, 2 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-  7, a Y2 star.
+  South's homeworld, a B2 star.
+  3, a G1 star.
+  4, a B1 star.
 
 North's fleet:
-  At their homeworld: a large red, a large green ship, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a small red and a small green ship.
+  At their homeworld: a large green ship, two medium yellow ships, a small red, and a small blue ship.
+  At 3: a large yellow ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, a small green, and a small blue ship.
-  At 3: a small green ship.
-  At 7: a medium green ship.
+  At their homeworld: a large green, a medium blue, a medium yellow, a small red, and a small green ship.
+  At 4: a small blue ship.
 
 It is North's turn.
-2017/06/17 22:22:08 visited=2509349 (1122.7/ms) evaluated=2371593 (1061.1/ms) in 2.235085984s
-Action: Build 4 G2  Score: 0.06349206349206349
+2017/06/18 19:43:25 40 basic actions to examine
+2017/06/18 19:43:25 1397 sacrifice actions to examine
+2017/06/18 19:43:29 visited=3564579 (855.6/ms) evaluated=3551490 (852.5/ms) in 4.166059028s
+Action: Sacrifice 2 Y3 2 Score: 1
 
 Turn number 30
 The Bank:
-  Red: 2 large.
-  Green: 1 large, 1 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 2 medium.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large, 1 medium.
+  Yellow: 3 large, 2 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-  7, a Y2 star.
+  South's homeworld, a B2 star.
+  3, a G1 star.
+  4, a B1 star.
 
 North's fleet:
-  At their homeworld: a large red, a large green ship, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a medium green, a small red, and a small green ship.
+  At their homeworld: a large green, a medium yellow, and a small red ship.
+  At South's homeworld: a medium yellow and a small blue ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, a small green, and a small blue ship.
-  At 3: a small green ship.
-  At 7: a medium green ship.
+  At their homeworld: a large green, a medium blue, a medium yellow, a small red, and a small green ship.
+  At 4: a small blue ship.
 
 It is South's turn.
-2017/06/17 22:22:09 visited=1395922 (1089.5/ms) evaluated=1309119 (1021.7/ms) in 1.281295883s
-Action: Build 2 G2  Score: -0.03968253968253968
+2017/06/18 19:43:29 67 basic actions to examine
+2017/06/18 19:43:29 2304 sacrifice actions to examine
+2017/06/18 19:43:37 visited=6067837 (707.8/ms) evaluated=5114888 (596.6/ms) in 8.572983043s
+Action: Build 1 Y1 Score: -2
 
 Turn number 31
 The Bank:
-  Red: 2 large.
-  Green: 1 large.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 2 medium.
+  Red: 3 large, 3 medium, 1 small.
+  Green: 3 medium, 1 small.
+  Blue: 3 large, 1 medium.
+  Yellow: 3 large, 1 small.
 
 Systems:
   North's homeworld, a G3/Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-  7, a Y2 star.
+  South's homeworld, a B2 star.
+  3, a G1 star.
+  4, a B1 star.
 
 North's fleet:
-  At their homeworld: a large red, a large green ship, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a medium green, a small red, and a small green ship.
+  At their homeworld: a large green, a medium yellow, and a small red ship.
+  At South's homeworld: a medium yellow and a small blue ship.
 
 South's fleet:
-  At their homeworld: a large yellow, a small red, a small green, and a small blue ship.
-  At 3: a medium green and a small green ship.
-  At 7: a medium green ship.
+  At their homeworld: a large green, a medium blue, a medium yellow, a small red, a small green, and a small yellow ship.
+  At 4: a small blue ship.
 
 It is North's turn.
-2017/06/17 22:22:11 visited=1637470 (1058.1/ms) evaluated=1529265 (988.2/ms) in 1.547488192s
-Action: Build 4 R3  Score: 0.051587301587301584
-
-Turn number 32
-The Bank:
-  Red: 1 large.
-  Green: 1 large.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 2 medium.
-
-Systems:
-  North's homeworld, a G3/Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-  7, a Y2 star.
-
-North's fleet:
-  At their homeworld: a large red, a large green ship, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a large red, a medium green, a small red, and a small green ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a small red, a small green, and a small blue ship.
-  At 3: a medium green and a small green ship.
-  At 7: a medium green ship.
-
-It is South's turn.
-2017/06/17 22:22:12 visited=1666161 (1094.6/ms) evaluated=1577653 (1036.4/ms) in 1.52219045s
-Action: Build 1 R3  Score: -0.027777777777777776
-
-Turn number 33
-The Bank:
-  Red: none.
-  Green: 1 large.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 2 medium.
-
-Systems:
-  North's homeworld, a G3/Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-  7, a Y2 star.
-
-North's fleet:
-  At their homeworld: a large red, a large green ship, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a large red, a medium green, a small red, and a small green ship.
-
-South's fleet:
-  At their homeworld: a large red, a large yellow, a small red, a small green, and a small blue ship.
-  At 3: a medium green and a small green ship.
-  At 7: a medium green ship.
-
-It is North's turn.
-2017/06/17 22:22:13 visited=1096160 (1090.2/ms) evaluated=1028886 (1023.3/ms) in 1.005454535s
-Action: Build 0 G3  Score: 0.05555555555555555
-
-Turn number 34
-The Bank:
-  Red: none.
-  Green: none.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 2 medium.
-
-Systems:
-  North's homeworld, a G3/Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-  7, a Y2 star.
-
-North's fleet:
-  At their homeworld: a large red ship, two large green, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a large red, a medium green, a small red, and a small green ship.
-
-South's fleet:
-  At their homeworld: a large red, a large yellow, a small red, a small green, and a small blue ship.
-  At 3: a medium green and a small green ship.
-  At 7: a medium green ship.
-
-It is South's turn.
-2017/06/17 22:22:15 visited=1728120 (1127.8/ms) evaluated=1643941 (1072.9/ms) in 1.532301501s
-Action: Move 5 G2 0 Score: -0.03968253968253968
-
-Turn number 35
-The Bank:
-  Red: none.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red ship, two medium red ships, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a large red, a medium green, a small red, and a small green ship.
-
-South's fleet:
-  At their homeworld: a large red, a large yellow, a small red, a small green, and a small blue ship.
-  At 3: a medium green and a small green ship.
-
-It is North's turn.
-2017/06/17 22:22:18 visited=3255714 (1104.1/ms) evaluated=3062437 (1038.5/ms) in 2.948871947s
-Action: Move 0 R2 1 Score: 0.027777777777777776
-
-Turn number 36
-The Bank:
-  Red: none.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red, a medium red, and a small blue ship.
-  At South's homeworld: a medium red ship.
-  At 4: a small yellow ship.
-  At 6: a large red, a medium green, a small red, and a small green ship.
-
-South's fleet:
-  At their homeworld: a large red, a large yellow, a small red, a small green, and a small blue ship.
-  At 3: a medium green and a small green ship.
-
-It is South's turn.
-2017/06/17 22:22:20 visited=3231556 (1091.9/ms) evaluated=3045005 (1028.8/ms) in 2.959697074s
-Action: Attack 1 R2  Score: -0.01984126984126984
-
-Turn number 37
-The Bank:
-  Red: none.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red, a medium red, and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a large red, a medium green, a small red, and a small green ship.
-
-South's fleet:
-  At their homeworld: a large red, a large yellow, a medium red, a small red, a small green, and a small blue ship.
-  At 3: a medium green and a small green ship.
-
-It is North's turn.
-2017/06/17 22:22:21 visited=834469 (1120.8/ms) evaluated=778907 (1046.2/ms) in 744.541948ms
-Action: Move 0 R2 1 Score: 0.05952380952380952
-
-Turn number 38
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a large red, a medium green, a small red, and a small green ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a small green, and a small blue ship.
-  At 3: a medium green and a small green ship.
-
-It is South's turn.
-2017/06/17 22:22:22 visited=865153 (1161.9/ms) evaluated=815488 (1095.2/ms) in 744.591676ms
-Action: Trade 1 G1 R1 Score: -0.027777777777777776
-
-Turn number 39
-The Bank:
-  Red: 1 large, 2 medium.
-  Green: 3 large, 1 medium, 1 small.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  4, a R1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 4: a small yellow ship.
-  At 6: a large red, a medium green, a small red, and a small green ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: a medium green and a small green ship.
-
-It is North's turn.
-2017/06/17 22:22:23 visited=1343444 (1185.8/ms) evaluated=1258189 (1110.5/ms) in 1.132971969s
-Action: Discover 3 Y1 G3 Score: 0.03968253968253968
-
-Turn number 40
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 2 large, 1 medium, 1 small.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-  8, a G3 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 6: a large red, a medium green, a small red, and a small green ship.
-  At 8: a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a small red, and a small blue ship.
-  At 3: a medium green and a small green ship.
-
-It is South's turn.
-2017/06/17 22:22:24 visited=1335546 (1154.5/ms) evaluated=1257526 (1087.0/ms) in 1.156859998s
-Action: Move 1 B1 2 Score: -0.01984126984126984
-
-Turn number 41
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 2 large, 1 medium, 1 small.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-  8, a G3 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 6: a large red, a medium green, a small red, and a small green ship.
-  At 8: a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow and a small red ship.
-  At 3: a medium green, a small green, and a small blue ship.
-
-It is North's turn.
-2017/06/17 22:22:26 visited=1915013 (1198.9/ms) evaluated=1805865 (1130.6/ms) in 1.597279645s
-Action: Move 4 Y1 3 Score: 0.05555555555555555
-
-Turn number 42
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 3 large, 1 medium, 1 small.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 6: a large red, a medium green, a small red, a small green, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow and a small red ship.
-  At 3: a medium green, a small green, and a small blue ship.
-
-It is South's turn.
-2017/06/17 22:22:31 visited=5699593 (1117.5/ms) evaluated=5370487 (1053.0/ms) in 5.100255889s
-Action: Move 2 G1 3 Score: -0.023809523809523808
-
-Turn number 43
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 3 large, 1 medium, 1 small.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 6: a large red, a medium green, a small red, a small green, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow and a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a small green ship.
-
-It is North's turn.
-2017/06/17 22:22:37 visited=6977106 (1187.7/ms) evaluated=6665441 (1134.6/ms) in 5.874597738s
-Action: Attack 3 G1  Score: 0.06349206349206349
-
-Turn number 44
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 3 large, 1 medium, 1 small.
-  Blue: 3 large, 2 medium, 1 small.
-  Yellow: 1 large, 3 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 6: a large red, a medium green, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow and a small red ship.
-  At 3: a medium green and a small blue ship.
-
-It is South's turn.
-2017/06/17 22:22:40 visited=3690551 (1107.3/ms) evaluated=3418721 (1025.8/ms) in 3.33283096s
-Action: Build 2 B1  Score: -0.03571428571428571
-
-Turn number 45
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 3 large, 1 medium, 1 small.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large, 3 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 6: a large red, a medium green, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow and a small red ship.
-  At 3: a medium green ship and two small blue ships.
-
-It is North's turn.
-2017/06/17 22:22:42 visited=2365977 (1236.4/ms) evaluated=2276037 (1189.4/ms) in 1.913646914s
-Action: Build 3 Y2  Score: 0.07142857142857142
-
-Turn number 46
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 3 large, 1 medium, 1 small.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large, 2 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 6: a large red, a medium green, a medium yellow, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow and a small red ship.
-  At 3: a medium green ship and two small blue ships.
-
-It is South's turn.
-2017/06/17 22:22:46 visited=4491147 (1094.1/ms) evaluated=4198645 (1022.9/ms) in 4.104837185s
-Action: Build 2 G1  Score: -0.03968253968253968
-
-Turn number 47
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large, 2 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 6: a large red, a medium green, a medium yellow, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow and a small red ship.
-  At 3: a medium green, a small green ship, and two small blue ships.
-
-It is North's turn.
-2017/06/17 22:22:53 visited=8063187 (1219.6/ms) evaluated=7791047 (1178.4/ms) in 6.611391288s
-Action: Move 3 R3 2 Score: 0.06746031746031746
-
-Turn number 48
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large, 2 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 3: a large red ship.
-  At 6: a medium green, a medium yellow, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow and a small red ship.
-  At 3: a medium green, a small green ship, and two small blue ships.
-
-It is South's turn.
-2017/06/17 22:22:59 visited=6360277 (1076.4/ms) evaluated=5953007 (1007.5/ms) in 5.908877518s
-Action: Move 2 G1 1 Score: -0.05952380952380952
-
-Turn number 49
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large, 2 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 3: a large red ship.
-  At 6: a medium green, a medium yellow, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a small red, and a small green ship.
-  At 3: a medium green ship and two small blue ships.
-
-It is North's turn.
-2017/06/17 22:23:04 visited=5963972 (1224.7/ms) evaluated=5767743 (1184.4/ms) in 4.869702297s
-Action: Attack 2 G2  Score: 0.09126984126984126
-
-Turn number 50
-The Bank:
-  Red: 1 large, 2 medium, 1 small.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large, 2 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 3: a large red and a medium green ship.
-  At 6: a medium green, a medium yellow, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a small red, and a small green ship.
-  At 3: two small blue ships.
-
-It is South's turn.
-2017/06/17 22:23:05 visited=1731696 (973.7/ms) evaluated=1552355 (872.9/ms) in 1.778424176s
-Action: Build 1 R1  Score: -0.06746031746031746
-
-Turn number 51
-The Bank:
-  Red: 1 large, 2 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large, 2 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 3: a large red and a medium green ship.
-  At 6: a medium green, a medium yellow, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow ship, two small red ships, and a small green ship.
-  At 3: two small blue ships.
-
-It is North's turn.
-2017/06/17 22:23:08 visited=3981201 (1272.0/ms) evaluated=3862979 (1234.2/ms) in 3.129869108s
-Action: Build 2 R2  Score: 0.0992063492063492
-
-Turn number 52
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large, 2 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 3: a large red, a medium red, and a medium green ship.
-  At 6: a medium green, a medium yellow, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow ship, two small red ships, and a small green ship.
-  At 3: two small blue ships.
-
-It is South's turn.
-2017/06/17 22:23:11 visited=2174884 (954.1/ms) evaluated=1921087 (842.7/ms) in 2.279552106s
-Action: Build 1 Y2  Score: -0.07539682539682539
-
-Turn number 53
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 3: a large red, a medium red, and a medium green ship.
-  At 6: a medium green, a medium yellow, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium yellow ship, two small red ships, and a small green ship.
-  At 3: two small blue ships.
-
-It is North's turn.
-2017/06/17 22:23:18 visited=9364812 (1288.3/ms) evaluated=9113304 (1253.7/ms) in 7.269266284s
-Action: Attack 2 B1  Score: 0.12301587301587301
-
-Turn number 54
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 3: a large red, a medium red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium yellow ship, two small red ships, and a small green ship.
-  At 3: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:23:21 visited=2962096 (902.4/ms) evaluated=2564493 (781.2/ms) in 3.282565134s
-Action: Discover 2 B1 Y3 Score: -0.08333333333333333
-
-Turn number 55
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-  9, a Y3 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 3: a large red, a medium red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow, a small red ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium yellow ship, two small red ships, and a small green ship.
-  At 9: a small blue ship.
-
-It is North's turn.
-2017/06/17 22:23:32 visited=13750405 (1314.6/ms) evaluated=13454110 (1286.3/ms) in 10.459606768s
-Action: Move 3 R1 4 Score: 0.12301587301587301
-
-Turn number 56
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  3, a Y1 star.
-  6, a R2 star.
-  9, a Y3 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 3: a large red, a medium red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-  At 9: a small red ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium yellow ship, two small red ships, and a small green ship.
-  At 9: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:23:35 visited=2603147 (839.5/ms) evaluated=2234287 (720.6/ms) in 3.100720285s
-Action: Discover 4 B1 Y2 Score: -0.08333333333333333
-
-Turn number 57
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: none.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  10, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-  9, a Y3 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 3: a large red, a medium red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-  At 9: a small red ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium yellow ship, two small red ships, and a small green ship.
-  At 10: a small blue ship.
-
-It is North's turn.
-2017/06/17 22:23:44 visited=11344841 (1263.9/ms) evaluated=11098334 (1236.5/ms) in 8.975888292s
-Action: Move 5 R1 2 Score: 0.12301587301587301
-
-Turn number 58
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  10, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 10: a small red ship.
-  At 3: a large red, a medium red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium yellow ship, two small red ships, and a small green ship.
-  At 10: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:23:46 visited=1946581 (843.5/ms) evaluated=1670403 (723.8/ms) in 2.307795901s
-Action: Discover 2 B1 Y3 Score: -0.08333333333333333
-
-Turn number 59
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: none.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  10, a Y2 star.
-  11, a Y3 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 10: a small red ship.
-  At 3: a large red, a medium red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium yellow ship, two small red ships, and a small green ship.
-  At 11: a small blue ship.
-
-It is North's turn.
-2017/06/17 22:23:54 visited=10409603 (1268.7/ms) evaluated=10185766 (1241.4/ms) in 8.204915606s
-Action: Move 2 R1 3 Score: 0.12301587301587301
-
-Turn number 60
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  11, a Y3 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 11: a small red ship.
-  At 3: a large red, a medium red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium yellow ship, two small red ships, and a small green ship.
-  At 11: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:23:57 visited=2017217 (844.4/ms) evaluated=1711992 (716.6/ms) in 2.38901432s
-Action: Discover 2 B1 Y2 Score: -0.08333333333333333
-
-Turn number 61
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: none.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  11, a Y3 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 11: a small red ship.
-  At 3: a large red, a medium red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium yellow ship, two small red ships, and a small green ship.
-  At 12: a small blue ship.
-
-It is North's turn.
-2017/06/17 22:24:05 visited=10665736 (1261.9/ms) evaluated=10433646 (1234.5/ms) in 8.45200498s
-Action: Move 2 R1 3 Score: 0.12301587301587301
-
-Turn number 62
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 2 medium.
-  Yellow: 1 large.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 12: a small red ship.
-  At 3: a large red, a medium red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium yellow ship, two small red ships, and a small green ship.
-  At 12: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:24:07 visited=1502731 (842.6/ms) evaluated=1294520 (725.8/ms) in 1.783513436s
-Action: Trade 1 Y2 B2 Score: -0.08333333333333333
-
-Turn number 63
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 12: a small red ship.
-  At 3: a large red, a medium red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium blue ship, two small red ships, and a small green ship.
-  At 12: a small blue ship.
-
-It is North's turn.
-2017/06/17 22:24:14 visited=8492037 (1272.5/ms) evaluated=8308706 (1245.0/ms) in 6.673486795s
-Action: Move 3 R2 1 Score: 0.14682539682539683
-
-Turn number 64
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At South's homeworld: a medium red ship.
-  At 12: a small red ship.
-  At 3: a large red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium blue ship, two small red ships, and a small green ship.
-  At 12: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:24:17 visited=2971149 (921.3/ms) evaluated=2646390 (820.6/ms) in 3.224953556s
-Action: Attack 1 R2  Score: -0.0873015873015873
-
-Turn number 65
-The Bank:
-  Red: 1 large, 1 medium.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 12: a small red ship.
-  At 3: a large red, a medium green, and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium red, a medium blue ship, two small red ships, and a small green ship.
-  At 12: a small blue ship.
-
-It is North's turn.
-2017/06/17 22:24:26 visited=11412163 (1221.3/ms) evaluated=11120499 (1190.1/ms) in 9.343970843s
-Action: Move 3 R3 1 Score: 0.15079365079365079
-
-Turn number 66
-The Bank:
-  Red: 2 large, 2 medium, 2 small.
-  Green: 3 large, 1 medium.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium blue, and a small green ship.
-  At 12: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:24:30 visited=3646638 (940.9/ms) evaluated=3273777 (844.7/ms) in 3.87571866s
-Action: Build 1 G2  Score: -0.08333333333333333
-
-Turn number 67
-The Bank:
-  Red: 2 large, 2 medium, 2 small.
-  Green: 3 large.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a large red and a small blue ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium green, a medium blue, and a small green ship.
-  At 12: a small blue ship.
-
-It is North's turn.
-2017/06/17 22:24:39 visited=10087729 (1165.5/ms) evaluated=9791214 (1131.3/ms) in 8.655182995s
-Action: Move 0 R3 1 Score: 0.1865079365079365
-
-Turn number 68
-The Bank:
-  Red: 2 large, 2 medium, 2 small.
-  Green: 3 large.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a small blue ship.
-  At South's homeworld: a large red ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow, a medium green, a medium blue, and a small green ship.
-  At 12: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:24:43 visited=3947252 (912.1/ms) evaluated=3542734 (818.7/ms) in 4.327520572s
-Action: Move 1 Y3 0 Score: -0.1388888888888889
-
-Turn number 69
-The Bank:
-  Red: 2 large, 2 medium, 2 small.
-  Green: 3 large.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a small blue ship.
-  At South's homeworld: a large red ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At North's homeworld: a large yellow ship.
-  At their homeworld: a medium green, a medium blue, and a small green ship.
-  At 12: a small blue ship.
-
-It is North's turn.
-2017/06/17 22:24:47 visited=5519910 (1274.8/ms) evaluated=5386348 (1244.0/ms) in 4.330017884s
-Action: Attack 1 G1  Score: 0.2896825396825397
-
-Turn number 70
-The Bank:
-  Red: 2 large, 2 medium, 2 small.
-  Green: 3 large.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a small blue ship.
-  At South's homeworld: a large red and a small green ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At North's homeworld: a large yellow ship.
-  At their homeworld: a medium green and a medium blue ship.
-  At 12: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:24:54 visited=6199997 (958.6/ms) evaluated=5605347 (866.7/ms) in 6.467506184s
-Action: Build 1 B2  Score: -0.3253968253968254
-
-Turn number 71
-The Bank:
-  Red: 2 large, 2 medium, 2 small.
-  Green: 3 large.
-  Blue: 3 large.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a small blue ship.
-  At South's homeworld: a large red and a small green ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At North's homeworld: a large yellow ship.
-  At their homeworld: a medium green ship and two medium blue ships.
-  At 12: a small blue ship.
-
-It is North's turn.
-2017/06/17 22:24:56 visited=2783661 (1298.7/ms) evaluated=2721579 (1269.7/ms) in 2.143482798s
-Action: Attack 1 G2  Score: 0.5198412698412699
-
-Turn number 72
-The Bank:
-  Red: 2 large, 2 medium, 2 small.
-  Green: 3 large.
-  Blue: 3 large.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a small blue ship.
-  At South's homeworld: a large red, a medium green, and a small green ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At North's homeworld: a large yellow ship.
-  At their homeworld: two medium blue ships.
-  At 12: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:24:59 visited=3164485 (915.3/ms) evaluated=2805787 (811.5/ms) in 3.457443408s
-Action: Trade 1 B2 R2 Score: -0.44047619047619047
-
-Turn number 73
-The Bank:
-  Red: 2 large, 1 medium, 2 small.
-  Green: 3 large.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a small blue ship.
-  At South's homeworld: a large red, a medium green, and a small green ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At North's homeworld: a large yellow ship.
-  At their homeworld: a medium red and a medium blue ship.
-  At 12: a small blue ship.
-
-It is North's turn.
-action returns to an earlier state: Attack 1 B2 
-2017/06/17 22:25:16 visited=21730980 (1296.7/ms) evaluated=21282762 (1269.9/ms) in 16.758863629s
-Action: Attack 1 R2  Score: 1
-
-Turn number 74
-The Bank:
-  Red: 2 large, 1 medium, 2 small.
-  Green: 3 large.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a small blue ship.
-  At South's homeworld: a large red, a medium red, a medium green, and a small green ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At North's homeworld: a large yellow ship.
-  At their homeworld: a medium blue ship.
-  At 12: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:25:18 visited=1754409 (929.0/ms) evaluated=1513335 (801.3/ms) in 1.888494096s
-Action: Move 0 Y3 1 Score: -2
-
-Turn number 75
-The Bank:
-  Red: 2 large, 1 medium, 2 small.
-  Green: 3 large.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a small blue ship.
-  At South's homeworld: a large red, a medium red, a medium green, and a small green ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow and a medium blue ship.
-  At 12: a small blue ship.
-
-It is North's turn.
-2017/06/17 22:25:20 visited=2991275 (1359.5/ms) evaluated=2934906 (1333.9/ms) in 2.200292297s
-Action: Attack 1 B2  Score: 3
-
-Turn number 76
-The Bank:
-  Red: 2 large, 1 medium, 2 small.
-  Green: 3 large.
-  Blue: 3 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a small blue ship.
-  At South's homeworld: a large red, a medium red, a medium green, a medium blue, and a small green ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow ship.
-  At 12: a small blue ship.
-
-It is South's turn.
-2017/06/17 22:25:21 visited=247653 (818.2/ms) evaluated=181809 (600.7/ms) in 302.661811ms
-Action: Discover 2 B1 B3 Score: -4
-
-Turn number 77
-The Bank:
-  Red: 2 large, 1 medium, 2 small.
-  Green: 3 large.
-  Blue: 2 large, 1 medium.
-  Yellow: 1 large, 1 medium.
-
-Systems:
-  North's homeworld, a Y1 star.
-  South's homeworld, a Y3/B2 star.
-  12, a Y2 star.
-  13, a B3 star.
-  3, a Y1 star.
-  6, a R2 star.
-
-North's fleet:
-  At their homeworld: a small blue ship.
-  At South's homeworld: a large red, a medium red, a medium green, a medium blue, and a small green ship.
-  At 12: a small red ship.
-  At 3: a medium green and a small blue ship.
-  At 6: a medium green, a medium yellow ship, two small green ships, and a small yellow ship.
-
-South's fleet:
-  At their homeworld: a large yellow ship.
-  At 13: a small blue ship.
-
-It is North's turn.
-2017/06/17 22:25:21 visited=837453 (1426.9/ms) evaluated=820975 (1398.8/ms) in 586.901099ms
-Action: Attack 1 Y3  Score: 5
+2017/06/18 19:43:37 40 basic actions to examine
+2017/06/18 19:43:39 1587 sacrifice actions to examine
+2017/06/18 19:43:40 visited=1881094 (851.7/ms) evaluated=1875327 (849.1/ms) in 2.208625899s
+Action: Trade 1 Y2 B2 Score: 3
 Winner: North
