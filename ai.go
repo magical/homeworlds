@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -278,7 +279,17 @@ func (g *Game) SacrificeActions() []SacrificeAction {
 }
 
 func (pos Position) SacrificeActions() []SacrificeAction {
-	var actions []SacrificeAction
+	var sg sacrificeGenerator
+	actions := sg.Generate(pos)
+	return actions
+}
+
+type sacrificeGenerator struct {
+	acts  []SacrificeAction
+	poses []Position
+}
+
+func (sg *sacrificeGenerator) Generate(pos Position) []SacrificeAction {
 	for id, s := range pos.stars {
 		ships := s.Ships(pos.CurrentPlayer())
 		for it := ships.Iter(); !it.Done(); it.Next() {
@@ -288,18 +299,31 @@ func (pos Position) SacrificeActions() []SacrificeAction {
 					// XXX large yellows can result
 					// in millions of potential actions
 					// which is more than we can handle
-					n = 2
+					n = 3
 				}
 				a := mksacrifice(it.Piece(), id)
 				tmp := pos.sacrifice(it.Piece(), id)
-				actions = sacrifice(&tmp, actions, a, n)
+				sg.gen(a, &tmp, n)
 			}
 		}
 	}
-	return actions
+	if len(sg.acts) <= 100 {
+		return sg.acts
+	}
+	// deduplicate
+	sort.Sort(&sortActions{sg.acts, sg.poses})
+	n := 1
+	for i := 1; i < len(sg.poses); i++ {
+		if !sg.poses[i-1].Equal(sg.poses[i]) {
+			sg.acts[n] = sg.acts[i]
+			n++
+		}
+	}
+	//log.Printf("reduced %d actions to %d", len(sg.acts), n)
+	return sg.acts[:n]
 }
 
-func sacrifice(pos *Position, actions []SacrificeAction, sa SacrificeAction, n int) []SacrificeAction {
+func (sg *sacrificeGenerator) gen(sa SacrificeAction, pos *Position, n int) {
 	//if !pos.sanityCheck() {
 	//	fmt.Printf("last action: %v\n", sa)
 	//	return actions
@@ -314,7 +338,7 @@ func sacrifice(pos *Position, actions []SacrificeAction, sa SacrificeAction, n i
 				for it := enemy.Iter(); !it.Done(); it.Next() {
 					if it.Count() > 0 && it.Piece().Size() <= size {
 						b := mkbasic(Attack, it.Piece(), id, 0)
-						actions = appendSacrifice(actions, pos, sa, b, n)
+						sg.emit(pos, sa, b, n)
 					}
 				}
 			}
@@ -327,12 +351,8 @@ func sacrifice(pos *Position, actions []SacrificeAction, sa SacrificeAction, n i
 				for c := Color(0); c < Color(4); c++ {
 					if ships.HasColor(c) && pos.bank.HasColor(c) {
 						q := piece(pos.bank.SmallestOfColor(c), c)
-						if !pos.bank.Has(q) {
-							log.Println(q, ships, pos.bank)
-							panic("oops")
-						}
 						b := mkbasic(Build, q, id, 0)
-						actions = appendSacrifice(actions, pos, sa, b, n)
+						sg.emit(pos, sa, b, n)
 					}
 				}
 			}
@@ -348,7 +368,7 @@ func sacrifice(pos *Position, actions []SacrificeAction, sa SacrificeAction, n i
 						q := piece(p.Size(), c)
 						if c != p.Color() && pos.bank.Has(q) {
 							b := mkbasic(Trade, p, id, q)
-							actions = appendSacrifice(actions, pos, sa, b, n)
+							sg.emit(pos, sa, b, n)
 						}
 					}
 				}
@@ -364,7 +384,7 @@ func sacrifice(pos *Position, actions []SacrificeAction, sa SacrificeAction, n i
 						for it := ships.Iter(); !it.Done(); it.Next() {
 							if it.Count() > 0 {
 								b := mkmove(it.Piece(), id, rid)
-								actions = appendSacrifice(actions, pos, sa, b, n)
+								sg.emit(pos, sa, b, n)
 							}
 						}
 					}
@@ -377,7 +397,7 @@ func sacrifice(pos *Position, actions []SacrificeAction, sa SacrificeAction, n i
 							p := it.Piece()
 							if it.Count() > 0 {
 								b := mkbasic(Discover, p, id, q)
-								actions = appendSacrifice(actions, pos, sa, b, n)
+								sg.emit(pos, sa, b, n)
 							}
 						}
 					}
@@ -385,23 +405,55 @@ func sacrifice(pos *Position, actions []SacrificeAction, sa SacrificeAction, n i
 			}
 		}
 	}
-	return actions
 }
 
-func appendSacrifice(actions []SacrificeAction, pos *Position, sa SacrificeAction, b BasicAction, n int) []SacrificeAction {
+func (sg *sacrificeGenerator) emit(pos *Position, sa SacrificeAction, b BasicAction, n int) {
 	sa = sa.append(b)
-	actions = append(actions, sa)
-	if n > 1 {
-		tmp := pos.do(b)
-		actions = sacrifice(&tmp, actions, sa, n-1)
+	tmp := pos.do(b)
+	sg.acts = append(sg.acts, sa)
+	sg.poses = append(sg.poses, tmp)
+	if n > 1 && !pos.over() {
+		sg.gen(sa, &tmp, n-1)
 	}
-	return actions
 }
 
 func (sa SacrificeAction) append(b BasicAction) SacrificeAction {
 	sa.actions[sa.arg] = b
 	sa.arg++
 	return sa
+}
+
+type sortActions struct {
+	a []SacrificeAction
+	p []Position
+}
+
+func (sa *sortActions) Len() int { return len(sa.a) }
+func (sa *sortActions) Swap(i, j int) {
+	sa.a[i], sa.a[j] = sa.a[j], sa.a[i]
+	sa.p[i], sa.p[j] = sa.p[j], sa.p[i]
+}
+func (sa *sortActions) Less(i, j int) bool {
+	if sa.p[i].bank.less(sa.p[j].bank) {
+		return true
+	}
+	if len(sa.p[i].stars) < len(sa.p[j].stars) {
+		return true
+	}
+	for k := range sa.p[i].stars {
+		s := &sa.p[i].stars[k]
+		r := &sa.p[j].stars[k]
+		if s.pieces.less(r.pieces) {
+			return true
+		}
+		if s.ships[0].less(r.ships[0]) {
+			return true
+		}
+		if s.ships[1].less(r.ships[1]) {
+			return true
+		}
+	}
+	return false
 }
 
 func (pos Position) do(b BasicAction) Position {
@@ -675,9 +727,11 @@ func (ai *AI) Minimax(pos Position, last BasicAction) (SacrificeAction, float64)
 		}
 	}
 
-	sacts := pos.SacrificeActions()
+	var sg sacrificeGenerator
+	sacts := sg.Generate(pos)
 	sshuffle(sacts, ai.r)
 	log.Printf("%d sacrifice actions to examine", len(sacts))
+	log.Printf("reduced %d actions to %d", len(sg.acts), len(sacts))
 	for _, a := range sacts {
 		tmp := pos.do(a.Basic())
 		for i := 0; i < a.N(); i++ {

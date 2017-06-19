@@ -95,3 +95,7 @@ func (bi BankIterator) Count() int {
 func (b Bank) Iter() BankIterator {
 	return BankIterator{i: 0, bits: b.bits}
 }
+
+func (b Bank) less(other Bank) bool {
+	return b.bits < other.bits
+}
