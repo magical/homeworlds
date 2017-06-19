@@ -13,7 +13,7 @@ func main() {
 	g := newGame()
 	ai := homeworlds.NewAI()
 	turn := 1
-	var last homeworlds.SacrificeAction
+	var last homeworlds.Action
 	for !g.IsOver() {
 		fmt.Println("\nTurn number", turn)
 		homeworlds.Print(os.Stdout, g)
@@ -82,7 +82,7 @@ func newGame() *homeworlds.Game {
 	return game
 }
 
-func do(g *homeworlds.Game, a homeworlds.SacrificeAction) error {
+func do(g *homeworlds.Game, a homeworlds.Action) error {
 	err := doBasic(g, a.Basic())
 	if err != nil {
 		return err

@@ -99,8 +99,8 @@ func (b BasicAction) Ship() Piece      { return Piece(b.ship) }
 func (b BasicAction) NewShip() Piece   { return Piece(b.arg) }
 func (b BasicAction) NewSystem() Piece { return Piece(b.arg) }
 func (b BasicAction) ToSystem() int    { return int(b.arg) }
-func (b BasicAction) Action() SacrificeAction {
-	return SacrificeAction{typ: b.typ, ship: b.ship, system: b.system, arg: b.arg}
+func (b BasicAction) Action() Action {
+	return Action{typ: b.typ, ship: b.ship, system: b.system, arg: b.arg}
 }
 
 func (t ActionType) String() string {
@@ -255,7 +255,7 @@ func (b Bank) sizes() uint {
 	return x
 }
 
-type SacrificeAction struct {
+type Action struct {
 	typ     uint8
 	ship    uint8
 	system  uint8
@@ -263,32 +263,32 @@ type SacrificeAction struct {
 	actions [3]BasicAction
 }
 
-func (sa SacrificeAction) Type() ActionType { return ActionType(sa.typ) }
-func (sa SacrificeAction) Ship() Piece      { return Piece(sa.ship) }
-func (sa SacrificeAction) System() int      { return int(sa.system) }
-func (sa SacrificeAction) N() int           { return int(sa.arg) }
+func (a Action) Type() ActionType { return ActionType(a.typ) }
+func (a Action) Ship() Piece      { return Piece(a.ship) }
+func (a Action) System() int      { return int(a.system) }
+func (a Action) N() int           { return int(a.arg) }
 
-func mksacrifice(ship Piece, system int) SacrificeAction {
-	return SacrificeAction{typ: uint8(Sacrifice), ship: uint8(ship), system: uint8(system)}
+func mksacrifice(ship Piece, system int) Action {
+	return Action{typ: uint8(Sacrifice), ship: uint8(ship), system: uint8(system)}
 }
 
-func (g *Game) SacrificeActions() []SacrificeAction {
+func (g *Game) SacrificeActions() []Action {
 	pos := PositionFromGame(g)
 	return pos.SacrificeActions()
 }
 
-func (pos Position) SacrificeActions() []SacrificeAction {
+func (pos Position) SacrificeActions() []Action {
 	var sg sacrificeGenerator
 	actions := sg.Generate(pos)
 	return actions
 }
 
 type sacrificeGenerator struct {
-	acts []SacrificeAction
+	acts []Action
 	//poses []Position
 }
 
-func (sg *sacrificeGenerator) Generate(pos Position) []SacrificeAction {
+func (sg *sacrificeGenerator) Generate(pos Position) []Action {
 	for id, s := range pos.stars {
 		ships := s.Ships(pos.CurrentPlayer())
 		for it := ships.Iter(); !it.Done(); it.Next() {
@@ -309,7 +309,7 @@ func (sg *sacrificeGenerator) Generate(pos Position) []SacrificeAction {
 	return sg.acts
 }
 
-func (sg *sacrificeGenerator) gen(sa SacrificeAction, pos *Position, n int) {
+func (sg *sacrificeGenerator) gen(sa Action, pos *Position, n int) {
 	//if !pos.sanityCheck() {
 	//	fmt.Printf("last action: %v\n", sa)
 	//	return actions
@@ -393,7 +393,7 @@ func (sg *sacrificeGenerator) gen(sa SacrificeAction, pos *Position, n int) {
 	}
 }
 
-func (sg *sacrificeGenerator) emit(pos *Position, sa SacrificeAction, b BasicAction, n int) {
+func (sg *sacrificeGenerator) emit(pos *Position, sa Action, b BasicAction, n int) {
 	sa = sa.append(b)
 	sg.acts = append(sg.acts, sa)
 	if n > 1 && !pos.over() {
@@ -402,10 +402,10 @@ func (sg *sacrificeGenerator) emit(pos *Position, sa SacrificeAction, b BasicAct
 	}
 }
 
-func (sa SacrificeAction) append(b BasicAction) SacrificeAction {
-	sa.actions[sa.arg] = b
-	sa.arg++
-	return sa
+func (a Action) append(b BasicAction) Action {
+	a.actions[a.arg] = b
+	a.arg++
+	return a
 }
 
 func (pos Position) do(b BasicAction) Position {
@@ -643,12 +643,12 @@ func NewAI() *AI {
 	}
 }
 
-func (ai *AI) Minimax(pos Position, last BasicAction) (SacrificeAction, float64) {
+func (ai *AI) Minimax(pos Position, last BasicAction) (Action, float64) {
 	t := time.Now()
 	ai.visited = 0
 	ai.evaluated = 0
 
-	var maxact SacrificeAction
+	var maxact Action
 	max := -5.0
 	depth := ai.depth
 	ply := 1
@@ -778,12 +778,12 @@ func (pos *Position) endturn() {
 	pos.player ^= 1
 }
 
-func (sa SacrificeAction) Basic() BasicAction {
-	return BasicAction{typ: sa.typ, ship: sa.ship, system: sa.system, arg: sa.arg}
+func (a Action) Basic() BasicAction {
+	return BasicAction{typ: a.typ, ship: a.ship, system: a.system, arg: a.arg}
 }
 
-func (sa SacrificeAction) Action(i int) BasicAction {
-	return sa.actions[i]
+func (a Action) Action(i int) BasicAction {
+	return a.actions[i]
 }
 
 var points = []int{0, 1, 3, 9}
@@ -861,7 +861,7 @@ func (pos Position) score() float64 {
 	return score
 }
 
-func sshuffle(acts []SacrificeAction, r *rand.Rand) {
+func sshuffle(acts []Action, r *rand.Rand) {
 	for i := 0; 1 < len(acts)-i; i++ {
 		j := i + r.Intn(len(acts)-i)
 		acts[i], acts[j] = acts[j], acts[i]
@@ -937,12 +937,12 @@ func (pos Position) Equal(other Position) bool {
 	return true
 }
 
-func (sa SacrificeAction) String() string {
+func (a Action) String() string {
 	s := ""
-	s += sa.Basic().String()
-	if sa.Type() == Sacrifice {
-		for i := 0; i < sa.N(); i++ {
-			s += ", " + sa.Action(i).String()
+	s += a.Basic().String()
+	if a.Type() == Sacrifice {
+		for i := 0; i < a.N(); i++ {
+			s += ", " + a.Action(i).String()
 		}
 	}
 	return s
