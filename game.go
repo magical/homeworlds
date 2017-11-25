@@ -213,17 +213,20 @@ func (s *Star) empty() bool {
 
 // Destroy returns a star and all its ships to the bank.
 func (g *Game) destroy(s *Star) {
-	for _, ships := range s.Ships {
+	for pl, ships := range s.Ships {
 		for _, p := range ships {
 			g.put(p)
 		}
+		s.Ships[pl] = ships[:0]
 	}
-	for _, p := range s.Pieces {
-		g.put(p)
+	if !s.IsHomeworld {
+		for _, p := range s.Pieces {
+			g.put(p)
+		}
+		s.Ships = nil
+		s.Pieces = nil
+		delete(g.Stars, s.Name)
 	}
-	s.Ships = nil
-	s.Pieces = nil
-	delete(g.Stars, s.Name)
 }
 
 func (g *Game) put(p Piece) {
@@ -298,7 +301,9 @@ func (g *Game) Sacrifice(p Piece, s *Star) error {
 		return errors.New("Sacrifice: no such piece")
 	}
 	g.put(p)
-	// TODO: destroy star if empty
+	if s.empty() {
+		g.destroy(s)
+	}
 	return nil
 }
 

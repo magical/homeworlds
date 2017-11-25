@@ -11,7 +11,8 @@ var systemid = 2
 
 func main() {
 	g := newGame()
-	ai := homeworlds.NewAI()
+	//ai := homeworlds.NewAI()
+	ai := homeworlds.NewMonteCarloAI()
 	turn := 1
 	var last homeworlds.Action
 	for !g.IsOver() {
@@ -21,9 +22,15 @@ func main() {
 		//n := rand.Intn(len(actions))
 		//a := actions[n]
 		pos := homeworlds.PositionFromGame(g)
-		a, v := ai.Minimax(pos, last.Basic())
-		fmt.Println("Action:", a.Basic(), "Score:", v)
-		do(g, a)
+		//a, v := ai.Minimax(pos, last.Basic())
+		a, v := ai.Go(pos)
+		_ = last
+		fmt.Println("Action:", a, "Score:", v)
+		err := do(g, a)
+		if err != nil {
+			fmt.Println("error:", err)
+			break
+		}
 		last = a
 		turn++
 	}
@@ -32,17 +39,17 @@ func main() {
 	}
 }
 
-func starMap(g *homeworlds.Game) []*homeworlds.Star {
+func starMap(g *homeworlds.Game) []string {
+	m := make([]string, 2, len(g.Stars))
+	m[0] = g.Homeworlds[homeworlds.North].Name
+	m[1] = g.Homeworlds[homeworlds.South].Name
 	stars := g.SortedStars()
-	m := make([]*homeworlds.Star, 2, len(g.Stars))
-	m[0] = g.Homeworlds[homeworlds.North]
-	m[1] = g.Homeworlds[homeworlds.South]
 	for _, name := range stars {
 		s := g.Stars[name]
 		if s.IsHomeworld {
 			continue
 		}
-		m = append(m, s)
+		m = append(m, s.Name)
 	}
 	return m
 }
@@ -87,7 +94,7 @@ func do(g *homeworlds.Game, a homeworlds.Action) error {
 	if err != nil {
 		return err
 	}
-	catastrophe(g)
+	catastrophes(g)
 
 	if a.Type() == homeworlds.Sacrifice {
 		for i := 0; i < a.N(); i++ {
@@ -95,7 +102,7 @@ func do(g *homeworlds.Game, a homeworlds.Action) error {
 			if err != nil {
 				return err
 			}
-			catastrophe(g)
+			catastrophes(g)
 		}
 	}
 
@@ -108,7 +115,7 @@ func doBasic(g *homeworlds.Game, a homeworlds.BasicAction) error {
 	if a.System() >= len(stars) {
 		return fmt.Errorf("no such system %d", a.System())
 	}
-	star := stars[a.System()]
+	star := g.Stars[stars[a.System()]]
 	switch a.Type() {
 	case homeworlds.Pass:
 		return nil
@@ -120,7 +127,7 @@ func doBasic(g *homeworlds.Game, a homeworlds.BasicAction) error {
 		if a.ToSystem() >= len(stars) {
 			return fmt.Errorf("no such system %d", a.ToSystem())
 		}
-		toStar := stars[a.ToSystem()]
+		toStar := g.Stars[stars[a.ToSystem()]]
 		return g.Move(a.Ship(), star, toStar)
 	case homeworlds.Attack:
 		target := homeworlds.North
@@ -138,10 +145,13 @@ func doBasic(g *homeworlds.Game, a homeworlds.BasicAction) error {
 	return nil
 }
 
-func catastrophe(g *homeworlds.Game) {
+func catastrophes(g *homeworlds.Game) {
 	for c := homeworlds.Color(0); c < homeworlds.Color(4); c++ {
-		for _, s := range g.Stars {
-			g.Catastrophe(c, s)
+		for name, s := range g.Stars {
+			err := g.Catastrophe(c, s)
+			if err == nil {
+				fmt.Printf("catastrophe of %s at %s", c, name)
+			}
 		}
 	}
 }

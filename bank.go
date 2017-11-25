@@ -70,6 +70,13 @@ func (b Bank) HasColor(c Color) bool {
 	return b.bits>>(c*6)&63 != 0
 }
 
+// true if only one ship in bank
+func (b Bank) isOne() bool {
+	x := b.bits
+	x &= 0x55555555
+	return x != 0 && x&(x-1) != 0
+}
+
 type BankIterator struct {
 	i    int
 	bits uint32

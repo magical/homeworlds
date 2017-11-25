@@ -4,11 +4,15 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"math"
 	"math/rand"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
+
+const maxPositions = 2e6
 
 type Position struct {
 	bank   Bank
@@ -266,6 +270,9 @@ type Action struct {
 func (a Action) Type() ActionType { return ActionType(a.typ) }
 func (a Action) Ship() Piece      { return Piece(a.ship) }
 func (a Action) System() int      { return int(a.system) }
+func (a Action) NewShip() Piece   { return Piece(a.arg) }
+func (a Action) NewSystem() Piece { return Piece(a.arg) }
+func (a Action) ToSystem() int    { return int(a.arg) }
 func (a Action) N() int           { return int(a.arg) }
 
 func mksacrifice(ship Piece, system int) Action {
@@ -286,6 +293,7 @@ func (pos Position) SacrificeActions() []Action {
 type sacrificeGenerator struct {
 	acts []Action
 	//poses []Position
+	val []float64
 }
 
 func (sg *sacrificeGenerator) Generate(pos Position) []Action {
@@ -300,12 +308,16 @@ func (sg *sacrificeGenerator) Generate(pos Position) []Action {
 					// which is more than we can handle
 					n = 2
 				}
+				if n > 2 {
+					n = 2
+				}
 				a := mksacrifice(it.Piece(), id)
 				tmp := pos.sacrifice(it.Piece(), id)
 				sg.gen(a, &tmp, n)
 			}
 		}
 	}
+	//sort.Sort(sg)
 	return sg.acts
 }
 
@@ -396,16 +408,122 @@ func (sg *sacrificeGenerator) gen(sa Action, pos *Position, n int) {
 func (sg *sacrificeGenerator) emit(pos *Position, sa Action, b BasicAction, n int) {
 	sa = sa.append(b)
 	sg.acts = append(sg.acts, sa)
+	//tmp := pos.do(b)
+	//sg.val = append(sg.val, tmp.score())
 	if n > 1 && !pos.over() {
 		tmp := pos.do(b)
 		sg.gen(sa, &tmp, n-1)
 	}
 }
 
+// sort.Interface
+func (sg *sacrificeGenerator) Len() int           { return len(sg.acts) }
+func (sg *sacrificeGenerator) Less(i, j int) bool { return sg.val[i] < sg.val[j] }
+func (sg *sacrificeGenerator) Swap(i, j int) {
+	sg.acts[i], sg.acts[j] = sg.acts[j], sg.acts[i]
+	sg.val[i], sg.val[j] = sg.val[j], sg.val[i]
+}
+
 func (a Action) append(b BasicAction) Action {
 	a.actions[a.arg] = b
 	a.arg++
 	return a
+}
+
+func validAction(pos Position, a Action) bool {
+	if a.Type() == Pass {
+		return true
+	}
+	if a.System() >= len(pos.stars) {
+		return false
+	}
+	star := pos.stars[a.System()]
+	ships := star.ships[pos.player]
+	powers := star.pieces
+	powers.add(ships)
+	switch a.Type() {
+	case Build:
+		return powers.HasColor(Green) &&
+			pos.bank.Has(a.Ship()) &&
+			ships.HasColor(a.Ship().Color()) &&
+			pos.bank.SmallestOfColor(a.Ship().Color()) == a.Ship().Size()
+	case Trade:
+		return powers.HasColor(Blue) &&
+			//b.Ship().Size() == b.NewShip().Size() &&
+			pos.bank.Has(a.NewShip()) &&
+			ships.Has(a.Ship())
+	case Attack:
+		return powers.HasColor(Red) &&
+			!ships.IsEmpty() &&
+			ships.Largest() >= a.Ship().Size() &&
+			star.ships[pos.player^1].Has(a.Ship())
+	case Move:
+		if a.ToSystem() >= len(pos.stars) {
+			return false
+		}
+		to := &pos.stars[a.ToSystem()]
+		return powers.HasColor(Yellow) &&
+			ships.Has(a.Ship()) &&
+			star.Connects(to)
+	case Discover:
+		return powers.HasColor(Yellow) &&
+			ships.Has(a.Ship()) &&
+			pos.bank.Has(a.NewSystem()) &&
+			star.WouldConnect(a.NewSystem())
+	case Sacrifice:
+		if !ships.Has(a.Ship()) {
+			return false
+		}
+		power := a.Ship().Color()
+		tmp := pos.do(a.Basic())
+		for i := 0; i < a.N(); i++ {
+			if !validSacrifice(tmp, a.Action(i), power) {
+				return false
+			}
+			tmp = tmp.do(a.Action(i))
+		}
+		return true
+	default:
+		panic("unknown action " + a.String())
+	}
+}
+
+func validSacrifice(pos Position, b BasicAction, power Color) bool {
+	star := pos.stars[b.System()]
+	ships := star.ships[pos.player]
+	switch b.Type() {
+	case Pass, Sacrifice:
+		return false
+	case Build:
+		return power == Green &&
+			pos.bank.Has(b.Ship()) &&
+			ships.HasColor(b.Ship().Color()) &&
+			pos.bank.SmallestOfColor(b.Ship().Color()) == b.Ship().Size()
+	case Trade:
+		return power == Blue &&
+			//b.Ship().Size() == b.NewShip().Size() &&
+			pos.bank.Has(b.NewShip()) &&
+			ships.Has(b.Ship())
+	case Attack:
+		return power == Red &&
+			!ships.IsEmpty() &&
+			ships.Largest() >= b.Ship().Size() &&
+			star.ships[pos.player^1].Has(b.Ship())
+	case Move:
+		if b.ToSystem() >= len(pos.stars) {
+			return false
+		}
+		to := &pos.stars[b.ToSystem()]
+		return power == Yellow &&
+			ships.Has(b.Ship()) &&
+			star.Connects(to)
+	case Discover:
+		return power == Yellow &&
+			ships.Has(b.Ship()) &&
+			pos.bank.Has(b.NewSystem()) &&
+			star.WouldConnect(b.NewSystem())
+	}
+	panic("unknown action " + b.String())
 }
 
 func (pos Position) do(b BasicAction) Position {
@@ -433,6 +551,17 @@ func (pos Position) do(b BasicAction) Position {
 		return pos.sacrifice(b.Ship(), b.System())
 	}
 	panic(fmt.Sprintf("unknown action: %s", b.Type()))
+}
+
+func (pos Position) doXXX(a Action) Position {
+	tmp := pos.do(a.Basic())
+	if a.Type() == Sacrifice {
+		for i := 0; i < a.N(); i++ {
+			tmp = tmp.do(a.Action(i))
+		}
+	}
+	tmp.endturn()
+	return tmp
 }
 
 func (pos Position) build(p Piece, s int) Position {
@@ -621,46 +750,110 @@ func (pos Position) String() string {
 		fmt.Fprintln(&buf, "  North:", s.ships[North].String())
 		fmt.Fprintln(&buf, "  South:", s.ships[South].String())
 	}
+	fmt.Fprintln(&buf, "Player:", pos.CurrentPlayer())
 	return buf.String()
 }
 
 type AI struct {
-	r     *rand.Rand
-	depth int
+	r *rand.Rand
+
+	// config
+	depth int  // depth of search
 	trace int  // trace up to depth
 	debug bool // enable sanity checks
+
+	// state
+	best      []Action
+	cancelled bool
 
 	// stats
 	evaluated int64
 	visited   int64
+	positions int64
+	unique    map[string]float64
 }
 
 func NewAI() *AI {
 	return &AI{
 		r:     rand.New(rand.NewSource(1)),
 		depth: 3,
+		debug: true,
 		trace: 0,
 	}
 }
 
-func (ai *AI) Minimax(pos Position, last BasicAction) (Action, float64) {
-	t := time.Now()
+func (ai *AI) Reset() {
+	ai.cancelled = false
 	ai.visited = 0
 	ai.evaluated = 0
+	ai.positions = 0
+	ai.unique = make(map[string]float64)
+	ai.best = make([]Action, ai.depth)
+}
 
-	var maxact Action
-	min := 5.0
-	max := -5.0
-	depth := ai.depth
+func (ai *AI) Minimax(pos Position, last BasicAction) (Action, float64) {
+	t := time.Now()
+	ai.Reset()
+
 	ply := 1
+
+	var a Action
+	var v float64
+	for depth := 1; depth <= ai.depth; depth++ {
+		tt := time.Now()
+		ai.visited = 0
+		ai.evaluated = 0
+		ai.positions = 0
+		ai.cancelled = false
+		a, v = ai.minimax0(pos, last, ply, depth)
+		dd := time.Since(tt)
+		ms := float64(dd) / float64(time.Millisecond)
+		log.Printf("maxdepth=%d positions=%d unique=%d visited=%d evaluated=%d (%.1f/ms) in %s",
+			depth, ai.positions, len(ai.unique), ai.visited, ai.evaluated,
+			float64(ai.evaluated)/ms,
+			dd)
+		if ai.cancelled {
+			log.Print("(search aborted)")
+		}
+		if math.Abs(v) >= 1.0 {
+			v += math.Copysign(float64(ai.depth-depth), v)
+			break
+		}
+	}
+
+	log.Println(pos)
+
+	_ = t
+	/*
+		d := time.Since(t)
+		ms := float64(d) / float64(time.Millisecond)
+		log.Printf("positions=%d unique=%d visited=%d evaluated=%d (%.1f/ms) in %s",
+			ai.positions, len(ai.unique), ai.visited, ai.evaluated,
+			float64(ai.evaluated)/ms,
+			d)
+	*/
+
+	return a, v
+}
+
+func (ai *AI) minimax0(pos Position, last BasicAction, ply, depth int) (Action, float64) {
+	min := 5.0 // TODO: rename to hi, lo
+	max := -5.0
 
 	acts := pos.BasicActions()
 	shuffle(acts, ai.r)
 	log.Printf("%d basic actions to examine", len(acts))
 	for _, a := range acts {
+		if ai.debug && !validAction(pos, a.Action()) {
+			log.Println(pos)
+			log.Println("invalid action:", a)
+		}
 		tmp := pos.do(a)
 		if a.Type() == Attack && a == last {
-			fmt.Println("Action returns to an earlier state:", a)
+			if ply <= ai.trace {
+				log.Println("%*s player=%d ply=%d action returns to an earlier state: %s",
+					ply, "", pos.CurrentPlayer(), ply, a)
+			}
 			continue
 		}
 		//tmp.catastrophes()
@@ -669,14 +862,18 @@ func (ai *AI) Minimax(pos Position, last BasicAction) (Action, float64) {
 			continue
 		}
 		tmp.endturn()
+
 		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max, -min)
 		//fmt.Printf("%d %c %f\n", depth, "+-"[pos.player], v)
+		if ai.cancelled {
+			break
+		}
 		if ply <= ai.trace {
 			log.Printf("%*s player=%d ply=%d depth=%d v=%f min= max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, max, a)
 		}
 		if v > max {
 			max = v
-			maxact = a.Action()
+			ai.best[0] = a.Action()
 		}
 	}
 
@@ -684,49 +881,105 @@ func (ai *AI) Minimax(pos Position, last BasicAction) (Action, float64) {
 	sshuffle(sacts, ai.r)
 	log.Printf("%d sacrifice actions to examine", len(sacts))
 	for _, a := range sacts {
+		if ai.debug && !validAction(pos, a) {
+			log.Println(pos)
+			log.Println("invalid action:", a)
+		}
 		tmp := pos.do(a.Basic())
 		for i := 0; i < a.N(); i++ {
 			tmp = tmp.do(a.actions[i])
 		}
+		if ai.debug && !tmp.sanityCheck() {
+			fmt.Println("last action:", a)
+			continue
+		}
 		tmp.endturn()
 		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max, -min)
+		if ai.cancelled {
+			break
+		}
 		if ply <= ai.trace {
 			log.Printf("%*s player=%d ply=%d depth=%d v=%f min= max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, max, a.Basic())
 		}
 		if v > max {
 			max = v
-			maxact = a
+			ai.best[0] = a
 		}
 	}
 
-	d := time.Since(t)
-	ms := float64(d) / float64(time.Millisecond)
-	log.Printf("visited=%d (%.1f/ms) evaluated=%d (%.1f/ms) in %s",
-		ai.visited, float64(ai.visited)/ms,
-		ai.evaluated, float64(ai.evaluated)/ms,
-		d)
-	return maxact, max
+	return ai.best[0], max
 }
 
 func (ai *AI) minimax(pos, last Position, ply, depth int, min, max float64) float64 {
-	ai.visited++
+	if ai.positions > maxPositions {
+		ai.cancelled = true
+		return 0 // abort
+	}
+
+	ai.positions++
+
 	if pos.over() {
 		ai.evaluated++
 		return pos.score() * float64(depth+1)
 	}
+
+	h := ""
+	/*
+		h := pos.hash()
+		if x, ok := ai.unique[h]; ok {
+			if math.Abs(x) < 1 {
+				return x
+			}
+		}
+	*/
+
 	if depth <= 0 {
 		ai.evaluated++
-		return pos.score()
+		v := pos.score()
+		//ai.unique[h] = v
+		return v
+	}
+
+	ai.visited++
+
+	if a := ai.best[ply-1]; a.Type() != Pass && validAction(pos, a) {
+		tmp := pos.do(a.Basic())
+		if a.Type() == Sacrifice {
+			for i := 0; i < a.N(); i++ {
+				tmp = tmp.do(a.Action(i))
+			}
+		}
+		tmp.endturn()
+		if !(a.Type() == Attack && tmp.Equal(last)) {
+			v := -ai.minimax(tmp, pos, ply+1, depth-1, -max, -min)
+			if ai.cancelled {
+				return 0
+			}
+			if v > max {
+				max = v
+				if max >= min {
+					return ai.record(h, max)
+				}
+			}
+		}
 	}
 
 	// basic actions
 	acts := pos.BasicActions()
-	shuffle(acts, ai.r)
+	//shuffle(acts, ai.r) // run out r
+	//sortActions(pos, acts)
 	for _, a := range acts {
+		if ai.debug {
+			if !validAction(pos, a.Action()) {
+				log.Println(pos)
+				log.Println("invalid action", a)
+			}
+		}
 		tmp := pos.do(a)
 		if a.Type() == Attack && tmp.Equal(last) {
-			if ply == 2 {
-				fmt.Println("action returns to an earlier state:", a)
+			if ply <= ai.trace {
+				log.Println("%*s player=%d ply=%d action returns to an earlier state: %s",
+					ply, "", pos.CurrentPlayer(), ply, a)
 			}
 			continue
 		}
@@ -738,6 +991,9 @@ func (ai *AI) minimax(pos, last Position, ply, depth int, min, max float64) floa
 		//tmp.catastrophes()
 		tmp.endturn()
 		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max, -min)
+		if ai.cancelled {
+			break
+		}
 		if ply <= ai.trace {
 			log.Printf("%*s player=%d ply=%d depth=%d v=%f min=%f max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, min, max, a)
 		}
@@ -745,7 +1001,8 @@ func (ai *AI) minimax(pos, last Position, ply, depth int, min, max float64) floa
 			max = v
 		}
 		if max >= min {
-			return max
+			ai.best[ply-1] = a.Action()
+			return ai.record(h, max)
 		}
 	}
 
@@ -753,12 +1010,21 @@ func (ai *AI) minimax(pos, last Position, ply, depth int, min, max float64) floa
 	sacts := pos.SacrificeActions()
 	//sshuffle(sacts, ai.r)
 	for _, sa := range sacts {
+		if ai.debug {
+			if !validAction(pos, sa) {
+				log.Println(pos)
+				log.Println("invalid action:", sa)
+			}
+		}
 		tmp := pos.do(sa.Basic())
 		for i := 0; i < sa.N(); i++ {
 			tmp = tmp.do(sa.actions[i])
 		}
 		tmp.endturn()
 		v := -ai.minimax(tmp, pos, ply+1, depth-1, -max, -min)
+		if ai.cancelled {
+			break
+		}
 		if ply <= ai.trace {
 			log.Printf("%*s player=%d ply=%d depth=%d v=%f min=%f max=%f move=%s", ply, "", pos.CurrentPlayer(), ply, depth, v, min, max, sa.Basic())
 		}
@@ -766,10 +1032,35 @@ func (ai *AI) minimax(pos, last Position, ply, depth int, min, max float64) floa
 			max = v
 		}
 		if max >= min {
-			return max
+			break
 		}
 	}
+	return ai.record(h, max)
+}
+
+func (ai *AI) record(h string, max float64) float64 {
+	//ai.unique[h] = max
 	return max
+}
+
+func sortActions(pos Position, acts []BasicAction) {
+	var val []float64
+	for _, a := range acts {
+		val = append(val, pos.do(a).score())
+	}
+	sort.Sort(byValue{acts, val})
+}
+
+type byValue struct {
+	acts []BasicAction
+	val  []float64
+}
+
+func (x byValue) Len() int           { return len(x.acts) }
+func (x byValue) Less(i, j int) bool { return x.val[i] > x.val[j] }
+func (x byValue) Swap(i, j int) {
+	x.acts[i], x.acts[j] = x.acts[j], x.acts[i]
+	x.val[i], x.val[j] = x.val[j], x.val[i]
 }
 
 func (pos Position) over() bool {
@@ -948,4 +1239,34 @@ func (a Action) String() string {
 		}
 	}
 	return s
+}
+
+func (pos Position) hash() string {
+	var b = make([]byte, 1+12*len(pos.stars))
+	b[0] = pos.player
+	for i, s := range pos.stars {
+		b[1+i*12+0] = uint8(s.pieces.bits)
+		b[1+i*12+1] = uint8(s.pieces.bits >> 8)
+		b[1+i*12+2] = uint8(s.pieces.bits >> 16)
+		b[1+i*12+3] = uint8(s.pieces.bits >> 24)
+		b[1+i*12+4] = uint8(s.ships[0].bits)
+		b[1+i*12+5] = uint8(s.ships[0].bits >> 8)
+		b[1+i*12+6] = uint8(s.ships[0].bits >> 16)
+		b[1+i*12+7] = uint8(s.ships[0].bits >> 24)
+		b[1+i*12+8] = uint8(s.ships[1].bits)
+		b[1+i*12+9] = uint8(s.ships[1].bits >> 8)
+		b[1+i*12+10] = uint8(s.ships[1].bits >> 16)
+		b[1+i*12+11] = uint8(s.ships[1].bits >> 24)
+	}
+	return string(b)
+}
+
+func (pos Position) winner() Player {
+	if pos.stars[North].ships[North].IsEmpty() {
+		return South
+	}
+	if pos.stars[South].ships[South].IsEmpty() {
+		return North
+	}
+	return 3
 }
