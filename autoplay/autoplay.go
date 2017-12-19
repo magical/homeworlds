@@ -35,8 +35,8 @@ func main() {
 func starMap(g *homeworlds.Game) []*homeworlds.Star {
 	stars := g.SortedStars()
 	m := make([]*homeworlds.Star, 2, len(g.Stars))
-	m[0] = g.Homeworlds[homeworlds.North]
-	m[1] = g.Homeworlds[homeworlds.South]
+	m[0] = g.Homeworld(homeworlds.North)
+	m[1] = g.Homeworld(homeworlds.South)
 	for _, name := range stars {
 		s := g.Stars[name]
 		if s.IsHomeworld {
@@ -69,9 +69,9 @@ func newGame() *homeworlds.Game {
 		NumPlayers:    2,
 		CurrentPlayer: homeworlds.North,
 		Bank:          make(map[homeworlds.Piece]int),
-		Homeworlds: map[homeworlds.Player]*homeworlds.Star{
-			homeworlds.North: north,
-			homeworlds.South: south,
+		Homeworlds: map[homeworlds.Player]string{
+			homeworlds.North: "north",
+			homeworlds.South: "south",
 		},
 		Stars: map[string]*homeworlds.Star{
 			"north": north,

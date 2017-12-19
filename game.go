@@ -77,9 +77,9 @@ type Game struct {
 	// Bank records how many of each piece are in the bank.
 	Bank map[Piece]int
 
-	// Homeworlds maps each player to their homeworld.
-	// These systems are also present in the Stars slice.
-	Homeworlds map[Player]*Star
+	// Homeworlds maps each player to the name of their homeworld,
+	// which can be looked up in the Stars map.
+	Homeworlds map[Player]string
 
 	// Stars is a map of star systems that are currently occupied.
 	// It is keyed by the name of the system.
@@ -407,7 +407,7 @@ func (g *Game) EndTurn() {
 
 func (g *Game) IsOver() bool {
 	for pl := Player(0); int(pl) < g.NumPlayers; pl++ {
-		if len(g.Homeworlds[pl].Ships[pl]) < 1 {
+		if len(g.Homeworld(pl).Ships[pl]) < 1 {
 			return true
 		}
 	}
@@ -416,18 +416,23 @@ func (g *Game) IsOver() bool {
 
 func (g *Game) Winner() Player {
 	for pl := Player(0); int(pl) < g.NumPlayers; pl++ {
-		if len(g.Homeworlds[pl].Ships[pl]) > 0 {
+		if len(g.Homeworld(pl).Ships[pl]) > 0 {
 			return pl
 		}
 	}
 	return Player(100)
 }
 
+// Homeworld returns the Star that is the given player's homeworld.
+func (g *Game) Homeworld(pl Player) *Star {
+	return g.Stars[g.Homeworlds[pl]]
+}
+
 func (g0 *Game) Copy() *Game {
 	g := *g0
 	g.Bank = make(map[Piece]int)
 	g.Stars = make(map[string]*Star)
-	g.Homeworlds = make(map[Player]*Star)
+	g.Homeworlds = make(map[Player]string)
 	for p, n := range g0.Bank {
 		g.Bank[p] = n
 	}
@@ -435,7 +440,7 @@ func (g0 *Game) Copy() *Game {
 		g.Stars[k] = s.Copy()
 	}
 	for pl, s := range g0.Homeworlds {
-		g.Homeworlds[pl] = g.Stars[s.Name]
+		g.Homeworlds[pl] = s
 	}
 	return &g
 }

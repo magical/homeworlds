@@ -15,9 +15,9 @@ var (
 			B3: 2, B2: 2, B1: 2,
 			Y3: 1, Y2: 2, Y1: 1,
 		},
-		Homeworlds: map[Player]*Star{
-			North: north,
-			South: south,
+		Homeworlds: map[Player]string{
+			North: "North [BUG]",
+			South: "South [BUG]",
 		},
 		Stars: map[string]*Star{
 			"North [BUG]": north,

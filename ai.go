@@ -30,8 +30,8 @@ func PositionFromGame(g *Game) Position {
 	}
 	stars := g.sortedStars()
 	pos.stars = make([]Dwarf, 2, len(g.Stars))
-	pos.stars[North] = dwarfFromStar(g.Homeworlds[North])
-	pos.stars[South] = dwarfFromStar(g.Homeworlds[South])
+	pos.stars[North] = dwarfFromStar(g.Homeworld(North))
+	pos.stars[South] = dwarfFromStar(g.Homeworld(South))
 	for _, name := range stars {
 		s := g.Stars[name]
 		if s.IsHomeworld {

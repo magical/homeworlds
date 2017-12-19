@@ -48,7 +48,7 @@ func Print(w io.Writer, g *Game) error {
 	fmt.Fprintln(w, "Systems:")
 	for i := 0; i < g.NumPlayers; i++ {
 		pl := Player(i)
-		s := g.Homeworlds[pl]
+		s := g.Homeworld(pl)
 		fmt.Fprintf(w, "  %s's homeworld, a %s star.\n", pl, fmtStar(s.Pieces))
 	}
 	// BUG: Stars is a map, so this prints the stars in a random order.
@@ -69,7 +69,7 @@ func Print(w io.Writer, g *Game) error {
 		for j := 0; j < g.NumPlayers; j++ {
 			// TODO: print player's own homeworld first
 			h := Player(j)
-			s := g.Homeworlds[h]
+			s := g.Homeworld(h)
 			if len(s.Ships[pl]) == 0 {
 				continue
 			}

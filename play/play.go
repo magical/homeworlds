@@ -159,9 +159,9 @@ func newGame() *homeworlds.Game {
 		NumPlayers:    2,
 		CurrentPlayer: homeworlds.North,
 		Bank:          make(map[homeworlds.Piece]int),
-		Homeworlds: map[homeworlds.Player]*homeworlds.Star{
-			homeworlds.North: north,
-			homeworlds.South: south,
+		Homeworlds: map[homeworlds.Player]string{
+			homeworlds.North: "north",
+			homeworlds.South: "south",
 		},
 		Stars: map[string]*homeworlds.Star{
 			"north": north,
