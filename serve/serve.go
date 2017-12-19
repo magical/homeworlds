@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -15,11 +16,17 @@ import (
 	"github.com/magical/homeworlds"
 )
 
+const gamefilename = "game.json"
+
 func main() {
 	host := flag.String("host", ":8080", "host and port to listen on")
 	flag.Parse()
 
-	game := newGame()
+	game, err := loadGame(gamefilename)
+	if err != nil {
+		log.Println(err)
+		game = newGame()
+	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		var b bytes.Buffer
@@ -39,6 +46,9 @@ func main() {
 			return
 		}
 		game = g
+		if err := saveGame(gamefilename, game); err != nil {
+			log.Println(err)
+		}
 		http.Redirect(w, r, "/", http.StatusFound)
 	})
 
@@ -90,6 +100,26 @@ func newGame() *homeworlds.Game {
 	game.ResetBank()
 
 	return &game
+}
+
+func loadGame(filename string) (*homeworlds.Game, error) {
+	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	g, err := homeworlds.Unmarshal(b)
+	if err != nil {
+		return nil, err
+	}
+	return g, nil
+}
+
+func saveGame(filename string, g *homeworlds.Game) error {
+	b, err := homeworlds.Marshal(g)
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(filename, b, 0644)
 }
 
 func play(g *homeworlds.Game, cmd string) (*homeworlds.Game, error) {
