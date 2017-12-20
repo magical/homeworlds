@@ -66,40 +66,16 @@ var tmpl = template.Must(template.New("game").Parse(`<!doctype html>
 `))
 
 func newGame() *homeworlds.Game {
-	var (
-		north = homeworlds.Star{
-			Name:        "north",
-			IsHomeworld: true,
-			Pieces:      []homeworlds.Piece{homeworlds.Y3, homeworlds.B2},
-			Ships: map[homeworlds.Player][]homeworlds.Piece{
-				homeworlds.North: {homeworlds.G3},
-			},
-		}
-
-		south = homeworlds.Star{
-			Name:        "south",
-			IsHomeworld: true,
-			Pieces:      []homeworlds.Piece{homeworlds.G3, homeworlds.R1},
-			Ships: map[homeworlds.Player][]homeworlds.Piece{
-				homeworlds.South: {homeworlds.Y3},
-			},
-		}
-		game = homeworlds.Game{
-			NumPlayers: 2,
-			Homeworlds: map[homeworlds.Player]string{
-				homeworlds.North: "north",
-				homeworlds.South: "south",
-			},
-			Stars: map[string]*homeworlds.Star{
-				"north": &north,
-				"south": &south,
-			},
-		}
-	)
-
-	game.ResetBank()
-
-	return &game
+	game := homeworlds.NewGame(2)
+	if err := game.BuildHomeworld(homeworlds.Y3, homeworlds.B2, homeworlds.G3, "north"); err != nil {
+		panic(err)
+	}
+	game.EndTurn()
+	if err := game.BuildHomeworld(homeworlds.G3, homeworlds.R1, homeworlds.Y3, "south"); err != nil {
+		panic(err)
+	}
+	game.EndTurn()
+	return game
 }
 
 func loadGame(filename string) (*homeworlds.Game, error) {
