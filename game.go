@@ -456,3 +456,50 @@ func (s0 *Star) Copy() *Star {
 	}
 	return &s
 }
+
+// BuildHomeworld constructs a homeworld with the given pieces and initial ship.
+func (g *Game) BuildHomeworld(p1, p2, ship Piece, name string) error {
+	//XXX check phase?
+	if _, exists := g.Homeworlds[g.CurrentPlayer]; exists {
+		return errors.New("Homeworld: player already has a homeworld")
+	}
+	if _, exists := g.Stars[name]; exists {
+		return errors.New("Homeworld: name already taken")
+	}
+	// make a copy of the bank to help decide if enough pieces are available
+	bank := make(map[Piece]int)
+	for k, v := range g.Bank {
+		bank[k] = v
+	}
+	bank[p1]--
+	bank[p2]--
+	bank[ship]--
+	if bank[p1] < 0 || bank[p2] < 0 || bank[ship] < 0 {
+		return errors.New("Homeworld: piece not available")
+	}
+	g.take(p1)
+	g.take(p2)
+	g.take(ship)
+	g.Stars[name] = &Star{
+		Name:        name,
+		IsHomeworld: true,
+		Pieces:      []Piece{p1, p2},
+		Ships: map[Player][]Piece{
+			g.CurrentPlayer: {ship},
+		},
+	}
+	g.Homeworlds[g.CurrentPlayer] = name
+	return nil
+}
+
+func NewGame(numPlayers int) *Game {
+	if numPlayers != 2 {
+		panic("homeworlds: invalid number of players")
+	}
+	var g Game
+	g.NumPlayers = numPlayers
+	g.ResetBank()
+	g.Homeworlds = make(map[Player]string)
+	g.Stars = make(map[string]*Star)
+	return &g
+}
